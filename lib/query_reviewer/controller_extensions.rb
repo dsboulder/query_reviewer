@@ -7,8 +7,10 @@ module QueryReviewer
     end
     
     def self.included(base)
-      base.alias_method_chain :perform_action, :query_review if QueryReviewer::CONFIGURATION["inject_view"]
-      base.alias_method_chain :process, :query_review
+      if QueryReviewer::CONFIGURATION["enabled"]
+        base.alias_method_chain :perform_action, :query_review if QueryReviewer::CONFIGURATION["inject_view"]
+        base.alias_method_chain :process, :query_review
+      end
       base.helper_method :query_review_output
     end
     
@@ -21,11 +23,15 @@ module QueryReviewer
     end
     
     def query_review_output
-      faux_view = QueryViewBase.new([File.join(File.dirname(__FILE__), "views")], {}, self)
-      queries = SqlQueryCollection.new(Thread.current["queries"])
-      queries.analyze!
-      faux_view.instance_variable_set("@queries", queries)
-      html = faux_view.render(:partial => "/box.rhtml")      
+      if QueryReviewer::CONFIGURATION["enabled"]
+        faux_view = QueryViewBase.new([File.join(File.dirname(__FILE__), "views")], {}, self)
+        queries = SqlQueryCollection.new(Thread.current["queries"])
+        queries.analyze!
+        faux_view.instance_variable_set("@queries", queries)
+        html = faux_view.render(:partial => "/box.rhtml")      
+      else
+        ""
+      end
     end
     
     def perform_action_with_query_review
