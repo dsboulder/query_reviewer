@@ -31,7 +31,7 @@ module QueryReviewer
     end
     
     def max_severity
-      warnings.empty? && collection_warnings.empty? ? 0 : [warnings.collect(&:severity).flatten.max, collection_warnings.collect(&:severity).flatten.max].max
+      warnings.empty? && collection_warnings.empty? ? 0 : [warnings.empty? ? 0 : warnings.collect(&:severity).flatten.max, collection_warnings.empty? ? 0 : collection_warnings.collect(&:severity).flatten.max].max
     end
     
     def total_severity

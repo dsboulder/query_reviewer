@@ -7,20 +7,25 @@ module QueryReviewer
     end
     
     def self.included(base)
-      base.alias_method_chain :perform_action, :query_review
+      base.alias_method_chain :perform_action, :query_review if QueryReviewer::CONFIGURATION["inject_view"]
       base.alias_method_chain :process, :query_review
+      base.helper_method :query_review_output
     end
     
     def add_query_output_to_view
       if response.body.match(/<\/body>/i) && Thread.current["queries"]
         idx = (response.body =~ /<\/body>/i)
-        faux_view = QueryViewBase.new([File.join(File.dirname(__FILE__), "views")], {}, self)
-        queries = SqlQueryCollection.new(Thread.current["queries"])
-        queries.analyze!
-        faux_view.instance_variable_set("@queries", queries)
-        html = faux_view.render(:partial => "/box.rhtml")
+        html = query_review_output
         response.body.insert(idx, html)
       end
+    end
+    
+    def query_review_output
+      faux_view = QueryViewBase.new([File.join(File.dirname(__FILE__), "views")], {}, self)
+      queries = SqlQueryCollection.new(Thread.current["queries"])
+      queries.analyze!
+      faux_view.instance_variable_set("@queries", queries)
+      html = faux_view.render(:partial => "/box.rhtml")      
     end
     
     def perform_action_with_query_review

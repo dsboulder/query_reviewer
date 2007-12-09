@@ -1,25 +1,30 @@
 # QueryReviewer
 require "ostruct"
-require "query_reviewer/array_extensions"
-require "query_reviewer/sql_query"
-require "query_reviewer/sql_sub_query"
-require "query_reviewer/mysql_adapter_extensions"
-require "query_reviewer/controller_extensions"
-
 
 module QueryReviewer
-  CONFIGURATION = YAML.load(File.read(File.join(File.dirname(__FILE__), "..", "query_reviewer.yml")))["all"] || {}
-  CONFIGURATION.merge!(YAML.load(File.read(File.join(File.dirname(__FILE__), "..", "query_reviewer.yml")))[RAILS_ENV || "development"])
+  CONFIGURATION = {}
   
-  if CONFIGURATION["enabled"]
-    begin      
-      CONFIGURATION["uv"] ||= !Gem.searcher.find("uv").nil?
-      if CONFIGURATION["uv"]
-        require "uv"
-      end
-    rescue
-      CONFIGURATION["uv"] ||= false    
+  def self.load_configuration
+    CONFIGURATION.merge!(YAML.load(File.read(File.join(File.dirname(__FILE__), "..", "query_reviewer_defaults.yml")))["all"] || {})
+    CONFIGURATION.merge!(YAML.load(File.read(File.join(File.dirname(__FILE__), "..", "query_reviewer_defaults.yml")))[RAILS_ENV || "test"] || {})
+    
+    app_config_file = File.join(RAILS_ROOT, "config", "query_reviewer.yml")
+    
+    if File.exist?(app_config_file)
+      CONFIGURATION.merge!(YAML.load(File.read(app_config_file))["all"] || {}) 
+      CONFIGURATION.merge!(YAML.load(File.read(app_config_file))[RAILS_ENV || "test"] || {}) 
     end
+    
+    if CONFIGURATION["enabled"]
+      begin      
+        CONFIGURATION["uv"] ||= !Gem.searcher.find("uv").nil?
+        if CONFIGURATION["uv"]
+          require "uv"
+        end
+      rescue
+        CONFIGURATION["uv"] ||= false    
+      end
+    end    
   end
   
   class QueryWarning
@@ -38,3 +43,10 @@ module QueryReviewer
     end
   end
 end
+
+QueryReviewer.load_configuration
+require "query_reviewer/array_extensions"
+require "query_reviewer/sql_query"
+require "query_reviewer/sql_sub_query"
+require "query_reviewer/mysql_adapter_extensions"
+require "query_reviewer/controller_extensions"

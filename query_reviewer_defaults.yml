@@ -1,4 +1,5 @@
 all:
+    inject_view: true
     warn_severity: 3
     critical_severity: 7
     warn_query_count: 20
@@ -8,4 +9,7 @@ development:
     enabled: true
     
 production:
+    enabled: false
     
+test:
+    enabled: false
