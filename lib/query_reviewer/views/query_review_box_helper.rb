@@ -1,0 +1,68 @@
+module QueryReviewer
+  module Views
+    module QueryReviewBoxHelper
+      def parent_div_class
+        "sql_#{parent_div_status.downcase}"
+      end
+      
+      def parent_div_status
+        if @queries.max_severity < (QueryReviewer::CONFIGURATION["warn_severity"] || 4)
+          "OK"
+        elsif @queries.max_severity < (QueryReviewer::CONFIGURATION["critical_severity"] || 7)
+          # uh oh
+          "WARNING"
+        else
+          # oh @#&!
+          "CRITICAL"
+        end
+      end
+      
+      def syntax_highlighted_sql(sql)
+        if QueryReviewer::CONFIGURATION["uv"]
+          uv_out = Uv.parse(sql, "xhtml", "sql_rails", false, "blackboard")
+          uv_out.gsub("<pre class=\"blackboard\">", "<code class=\"sql\">").gsub("</pre>", "</code>")
+        else
+          sql
+        end
+      end
+      
+      def severity_color(severity)
+        red = (severity * 16.0 / 10).to_i
+        green = ((10-severity) * 16.0 / 10).to_i
+        red = 8 if red > 8
+        red = 0 if red < 0
+        green = 8 if green > 8
+        green = 0 if green < 0
+        "##{red.to_s(16)}#{green.to_s(16)}0"
+      end
+      
+      def queries_with_warnings
+        @queries.queries.select{|q| q.has_warnings?}       
+      end
+      
+      def queries_with_warnings_sorted
+        queries_with_warnings.sort{|a,b| a.max_severity <=> b.max_severity}.reverse
+      end
+      
+      def queries_with_warnings_sorted_nonignored
+        queries_with_warnings_sorted.select{|q| q.max_severity >= ::QueryReviewer::CONFIGURATION["warn_severity"]} 
+      end
+
+      def queries_with_warnings_sorted_ignored
+        queries_with_warnings_sorted.select{|q| q.max_severity < ::QueryReviewer::CONFIGURATION["warn_severity"]} 
+      end
+      
+      def warnings_no_query_sorted
+        @queries.collection_warnings.sort{|a,b| a.severity <=> b.severity}.reverse
+      end
+
+      def warnings_no_query_sorted_ignored
+        warnings_no_query_sorted.select{|q| q.severity < ::QueryReviewer::CONFIGURATION["warn_severity"]} 
+      end
+      
+      def warnings_no_query_sorted_nonignored
+        warnings_no_query_sorted.select{|q| q.severity >= ::QueryReviewer::CONFIGURATION["warn_severity"]} 
+      end
+    end
+  end
+end

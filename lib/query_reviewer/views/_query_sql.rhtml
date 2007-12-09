@@ -1,0 +1,4 @@
+<%= syntax_highlighted_sql(query_sql.sql) %> 
+<% if query_sql.respond_to?(:subqueries) && query_sql.subqueries.length > 1 %>
+	(<%= query_sql.subqueries.length - 1 %> subqueries)
+<% end %>

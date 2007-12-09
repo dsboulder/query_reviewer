@@ -1,0 +1,11 @@
+all:
+    warn_severity: 3
+    critical_severity: 7
+    warn_query_count: 20
+    critical_query_count: 50
+        
+development:
+    enabled: true
+    
+production:
+    

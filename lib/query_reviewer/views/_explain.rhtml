@@ -1,0 +1,24 @@
+<table cellpadding="1" cellspacing="0" border="1">
+	<tr>
+		<th>table</th>
+		<th>select_type</th>
+		<th>type</th>
+		<th>extra</th>
+		<th>possible_keys</th>
+		<th>key</th>
+		<th>ref</th>
+		<th>rows</th>
+	</tr>
+	<% query.subqueries.each do |subquery| %>
+	<tr>
+		<td><%= h subquery.table %></td>
+		<td><%= h subquery.select_type %></td>
+		<td><%= h subquery.query_type %></td>
+		<td><%= h subquery.extra %></td>
+		<td><%= h subquery.possible_keys %></td>
+		<td><%= h subquery.key %></td>
+		<td><%= h subquery.ref %></td>
+		<td><%= h subquery.rows %></td>
+	<tr>
+	<% end %>
+</table>
