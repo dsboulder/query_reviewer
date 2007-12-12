@@ -6,9 +6,9 @@ module QueryReviewer
       end
       
       def parent_div_status
-        if @queries.max_severity < (QueryReviewer::CONFIGURATION["warn_severity"] || 4)
+        if overall_max_severity < (QueryReviewer::CONFIGURATION["warn_severity"] || 4)
           "OK"
-        elsif @queries.max_severity < (QueryReviewer::CONFIGURATION["critical_severity"] || 7)
+        elsif overall_max_severity < (QueryReviewer::CONFIGURATION["critical_severity"] || 7)
           # uh oh
           "WARNING"
         else
@@ -26,6 +26,13 @@ module QueryReviewer
         end
       end
       
+      def overall_max_severity
+        max = 0
+        max = queries_with_warnings_sorted_nonignored[0].max_severity unless queries_with_warnings_sorted_nonignored.empty?
+        max = warnings_no_query_sorted.first.severity unless warnings_no_query_sorted.empty? || warnings_no_query_sorted.first.severity < max
+        max
+      end
+      
       def severity_color(severity)
         red = (severity * 16.0 / 10).to_i
         green = ((10-severity) * 16.0 / 10).to_i
@@ -34,6 +41,10 @@ module QueryReviewer
         green = 8 if green > 8
         green = 0 if green < 0
         "##{red.to_s(16)}#{green.to_s(16)}0"
+      end
+      
+      def ignore_hash?(h)
+      	(@controller.send(:cookies)["query_review_ignore_list"] || "").split(",").include?(h.to_s)
       end
       
       def queries_with_warnings
@@ -45,11 +56,11 @@ module QueryReviewer
       end
       
       def queries_with_warnings_sorted_nonignored
-        queries_with_warnings_sorted.select{|q| q.max_severity >= ::QueryReviewer::CONFIGURATION["warn_severity"]} 
+        queries_with_warnings_sorted.select{|q| q.max_severity >= ::QueryReviewer::CONFIGURATION["warn_severity"] && !ignore_hash?(q.to_hash)} 
       end
 
       def queries_with_warnings_sorted_ignored
-        queries_with_warnings_sorted.select{|q| q.max_severity < ::QueryReviewer::CONFIGURATION["warn_severity"]} 
+        queries_with_warnings_sorted.reject{|q| q.max_severity >= ::QueryReviewer::CONFIGURATION["warn_severity"] && !ignore_hash?(q.to_hash)} 
       end
       
       def warnings_no_query_sorted

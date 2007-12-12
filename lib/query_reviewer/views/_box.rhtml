@@ -100,6 +100,22 @@
 	font-size: 10px;
 }
 
+#query_review_details .tbpadded {
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+#query_review_details .trace {
+	background-color: #0C1021;
+	color: #7F908A;
+	padding: 5px;
+	margin-right: 30px;
+}
+
+#query_review_details .trace .bold {
+	color: white;
+}
+
 #query_review_details div.spectrum_container {
 	margin-top: 4px;
 	width: 35px; 
@@ -125,6 +141,45 @@
 	background-color: black;
 	top: -2px;
 }
+
+#query_review_details table {
+	background-color: white;
+	border: 1px solid gray;
+	padding: 0px;
+	margin: 0px;
+}
+
+#query_review_details tbody {
+	border: 0px;
+	padding: 0px;
+	margin: 0px;
+}
+
+#query_review_details thead {
+	border-bottom: 1px solid gray;
+	padding: 0px;
+	margin: 0px;
+}
+
+
+#query_review_details tr {
+	border: 0px;
+	padding: 0px;
+	margin: 0px;
+}
+
+#query_review_details td {
+	border: 0px;
+	padding: 0px;
+	margin: 0px;
+}
+
+#query_review_details th {
+	border-bottom: 1px solid gray;
+	padding: 0px;
+	margin: 0px;
+}
+
 </style>
 
 <style>
@@ -165,6 +220,57 @@ function query_review_toggle(id) {
 		document.getElementById(id).style.display = "none";
 	}
 }
+function createCookie(name,value,days) {
+	if (days) {
+		var date = new Date();
+		date.setTime(date.getTime()+(days*24*60*60*1000));
+		var expires = "; expires="+date.toGMTString();
+	}
+	else var expires = "";
+	document.cookie = name+"="+value+expires+"; path=/";
+}
+
+function readCookie(name) {
+	var nameEQ = name + "=";
+	var ca = document.cookie.split(';');
+	for(var i=0;i < ca.length;i++) {
+		var c = ca[i];
+		while (c.charAt(0)==' ') c = c.substring(1,c.length);
+		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+	}
+	return null;
+}
+
+function eraseCookie(name) {
+	createCookie(name,"",-1);
+}
+
+function ignore_list() {
+	var ignore_list = readCookie("query_review_ignore_list")
+	if (!ignore_list)	
+		ignore_list = []
+	else
+		ignore_list = ignore_list.split(",")
+	return ignore_list
+}
+
+function add_ignore_hash(h){
+	var list = ignore_list();
+	list[list.length] = h
+	createCookie("query_review_ignore_list", list.join(","))
+}
+
+function remove_ignore_hash(h) {
+	var list = ignore_list();
+	var new_list = []
+	for(var i=0; i<list.length; i++)
+	{
+		if(list[i].toString() != h.toString()) {
+			new_list[new_list.length] = list[i]
+		}
+	}
+	createCookie("query_review_ignore_list", new_list.join(","))	
+}
 </script>
 
 <div id="query_review" class="<%= parent_div_class %>">
@@ -174,18 +280,22 @@ function query_review_toggle(id) {
 	<p>Total queries: <span class="number"><%= @queries.queries.length %></span></p>
 	<p class="indent">With warnings: <span class="number bad"><%= @queries.total_with_warnings %></span> (<%= @queries.percent_with_warnings %>%)</p>
 	<p class="indent">Without warnings: <span class="number good"><%= @queries.total_without_warnings %></span> (<%= @queries.percent_without_warnings %>%)</p>
-	<% if @queries.total_with_warnings > 0 %>
+	<% if warnings_no_query_sorted.length + queries_with_warnings_sorted.length > 0 %>
 		<div class="divider"></div>
-		<p class="title">Warnings:</p>
-		<ul>
-			<%= render :partial => "/warning_no_query", :collection => warnings_no_query_sorted_nonignored %>
-			<%= render :partial => "/query_with_warning", :collection => queries_with_warnings_sorted_nonignored %>
-		</ul>
-		<a class="title" href="javascript: query_review_toggle('query_review_ignored_warnings')">Ignored Warnings:</a>
-		<ul style="display: none;" id="query_review_ignored_warnings">
-			<%= render :partial => "/warning_no_query", :collection => warnings_no_query_sorted_ignored %>
-			<%= render :partial => "/query_with_warning", :collection => queries_with_warnings_sorted_ignored %>
-		</ul>		
+		<% if warnings_no_query_sorted_nonignored.length + queries_with_warnings_sorted_nonignored.length > 0 %>
+			<p class="title"><%= warnings_no_query_sorted_nonignored.length + queries_with_warnings_sorted_nonignored.length %> Warnings:</p>
+			<ul>
+				<%= render :partial => "/warning_no_query", :collection => warnings_no_query_sorted_nonignored %>
+				<%= render :partial => "/query_with_warning", :collection => queries_with_warnings_sorted_nonignored %>
+			</ul>
+		<% end %>
+		<% if warnings_no_query_sorted_ignored.length + queries_with_warnings_sorted_ignored.length > 0 %>
+			<%= warnings_no_query_sorted_ignored.length + queries_with_warnings_sorted_ignored.length %> <a class="title" href="javascript: query_review_toggle('query_review_ignored_warnings')">Ignored Warnings</a>:
+			<ul style="display: none;" id="query_review_ignored_warnings">
+				<%= render :partial => "/warning_no_query", :collection => warnings_no_query_sorted_ignored %>
+				<%= render :partial => "/query_with_warning", :collection => queries_with_warnings_sorted_ignored %>
+			</ul>		
+		<% end %>
 	<% end %>
 	<div class="divider"></div>
 	<p class="title">Safe queries:</p>

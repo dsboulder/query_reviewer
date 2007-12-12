@@ -2,11 +2,7 @@
 	<div>
 		<%= render :partial => "/spectrum", :locals => {:severity => warning_no_query.severity} %>
 		<p>
-			<%= warning_no_query.problem %>
-			<a href="javascript: query_review_toggle('warning_nq_<%= warning_no_query.id %>_desc')" title="show/hide warning message">MSG</a>
+			<span style="color: <%= severity_color warning_no_query.severity%>" title="<%= warning_no_query.desc %>"><%= warning_no_query.problem %></span>
 		</p>
 	</div>
-	<p id="warning_nq_<%= warning_no_query.id %>_desc" class="indent">
-			<span style="color: <%= severity_color warning_no_query.severity%>"><%= warning_no_query.desc %><br/>
-	</p>
 </li>

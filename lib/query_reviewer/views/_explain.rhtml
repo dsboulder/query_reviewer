@@ -1,4 +1,5 @@
-<table cellpadding="1" cellspacing="0" border="1">
+<table>
+	<thead>
 	<tr>
 		<th>table</th>
 		<th>select_type</th>
@@ -9,6 +10,8 @@
 		<th>ref</th>
 		<th>rows</th>
 	</tr>
+	</thead>
+	<tbody>
 	<% query.subqueries.each do |subquery| %>
 	<tr>
 		<td><%= h subquery.table %></td>
@@ -19,6 +22,7 @@
 		<td><%= h subquery.key %></td>
 		<td><%= h subquery.ref %></td>
 		<td><%= h subquery.rows %></td>
-	<tr>
+	<tr>		
 	<% end %>
+	</tbody>
 </table>

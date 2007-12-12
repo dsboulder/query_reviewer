@@ -11,7 +11,7 @@ module QueryReviewer
       @sql = sql
       @subqueries = rows.collect{|row| SqlSubQuery.new(self, row)}
       @id = (self.class.next_id += 1)
-      # get_trace
+      get_trace
     end
     
     def to_table
@@ -34,13 +34,20 @@ module QueryReviewer
       self.subqueries.collect(&:analyze!)
     end
     
+    def to_hash
+      @sql.hash
+    end
+    
+    def relevant_trace
+      trace.collect(&:strip).select{|t| t.starts_with?(RAILS_ROOT) && !t.starts_with?("#{RAILS_ROOT}/vendor/rails") && !t.starts_with?("#{RAILS_ROOT}/vendor/plugins/query_reviewer") }
+    end
+    
     def get_trace
       begin
         raise "not a real exception"
       rescue
         @trace = $!.backtrace
       end
-      puts @trace.inspect
     end
   end
 end

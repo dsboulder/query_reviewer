@@ -12,9 +12,9 @@ module QueryReviewer
       @warnings = []
       
       if @queries.length > QueryReviewer::CONFIGURATION["critical_query_count"]
-        warn(:severity => QueryReviewer::CONFIGURATION["critical_severity"], :problem => "#{@queries.length} queries on this page", :description => "Too many queries can severely slow down a page")
+        warn(:severity => ((QueryReviewer::CONFIGURATION["critical_severity"] + 10)/2).to_i, :problem => "#{@queries.length} queries on this page", :description => "Too many queries can severely slow down a page")
       elsif @queries.length > QueryReviewer::CONFIGURATION["warn_query_count"]
-        warn(:severity => QueryReviewer::CONFIGURATION["warn_severity"], :problem => "#{@queries.length} queries on this page", :description => "Too many queries can slow down a page")
+        warn(:severity => ((QueryReviewer::CONFIGURATION["warn_severity"] + QueryReviewer::CONFIGURATION["critical_severity"])/2).to_i, :problem => "#{@queries.length} queries on this page", :description => "Too many queries can slow down a page")
       end
     end
     

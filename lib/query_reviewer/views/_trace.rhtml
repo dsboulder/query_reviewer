@@ -1,0 +1,10 @@
+<div class="trace">
+<code>
+	<% trace[0..2].each do |c| %>
+		<% file = h(c.slice(0..(c.index(":", c.index(":")+1)-1))) %>
+		<span><%= file.split("/")[0..-2].join("/") %>/</span><span class="bold"><%= file.split("/").last %></span>
+		<br/>
+		<span class="indent"><%= h(c.slice((c.index(":", c.index(":")+1)+1)..-1)) %></span><br/>
+	<% end %>
+</code>
+</div>
