@@ -5,12 +5,12 @@
 	left: 1px;
 	height: 18px;
 	margin: 1px;
-	opacity: 0.8;
+	opacity: 0.75;
 	padding-left: 3px;
 	padding-right: 3px;
-	border: 1px solid black;	
+	border: 1px solid black;
 	font-size: 12px;
-	font-weight: bold;	
+	font-weight: bold;
 }
 
 #query_review.sql_ok {
@@ -35,11 +35,11 @@
 
 #query_review_details {
 	position: absolute;
-	top: 21px;	
-	left: 1px;	
+	top: 21px;
+	left: 1px;
 	width: 700px;
 	height: 500px;
-	opacity: 0.8;
+	opacity: 0.9;
 	margin: 1px;
 	padding: 2px;
 	border: 1px solid black;
@@ -118,25 +118,25 @@
 
 #query_review_details div.spectrum_container {
 	margin-top: 4px;
-	width: 35px; 
-	display: block; 
-	float: left; 
-	position: relative; 
-	height: 14px; 
+	width: 35px;
+	display: block;
+	float: left;
+	position: relative;
+	height: 14px;
 	margin-right: 5px;
 }
 
 #query_review_details div.spectrum_elem {
 	width: 1px;
-	display: block; 
-	float: left; 
-	height: 10px; 
+	display: block;
+	float: left;
+	height: 10px;
 }
 #query_review_details div.spectrum_pointer {
 	width: 2px;
-	display: block; 
-	float: left; 
-	position: absolute; 
+	display: block;
+	float: left;
+	position: absolute;
 	height: 14px;
 	background-color: black;
 	top: -2px;
@@ -172,6 +172,7 @@
 	border: 0px;
 	padding: 0px;
 	margin: 0px;
+    overflow: hidden;
 }
 
 #query_review_details th {
@@ -183,7 +184,7 @@
 </style>
 
 <style>
-.sql {	
+.sql {
 	color: black;
 }
 .sql .String {
@@ -200,7 +201,7 @@
 }
 .sql .Comment {
    color: #0066FF;
-   font-style: italic;	
+   font-style: italic;
 }
 </style>
 
@@ -247,7 +248,7 @@ function eraseCookie(name) {
 
 function ignore_list() {
 	var ignore_list = readCookie("query_review_ignore_list")
-	if (!ignore_list)	
+	if (!ignore_list)
 		ignore_list = []
 	else
 		ignore_list = ignore_list.split(",")
@@ -269,7 +270,7 @@ function remove_ignore_hash(h) {
 			new_list[new_list.length] = list[i]
 		}
 	}
-	createCookie("query_review_ignore_list", new_list.join(","))	
+	createCookie("query_review_ignore_list", new_list.join(","))
 }
 </script>
 
@@ -294,7 +295,7 @@ function remove_ignore_hash(h) {
 			<ul style="display: none;" id="query_review_ignored_warnings">
 				<%= render :partial => "/warning_no_query", :collection => warnings_no_query_sorted_ignored %>
 				<%= render :partial => "/query_with_warning", :collection => queries_with_warnings_sorted_ignored %>
-			</ul>		
+			</ul>
 		<% end %>
 	<% end %>
 	<div class="divider"></div>
@@ -306,7 +307,15 @@ function remove_ignore_hash(h) {
 			<% @queries.queries.reject{|q| q.has_warnings?}.each do |query| %>
 			<li>
 				<%= render :partial => "/query_sql", :object => query %>
-			</li>
+          <a href="javascript: query_review_toggle('warning_<%= query.id %>_explain')" title="show/hide sql">EXPLN</a>
+          <a href="javascript: query_review_toggle('warning_<%= query.id %>_trace')" title="show/hide stack trace">TRACE</a>
+          <div style="display: none" id="warning_<%= query.id %>_explain" class="indent small tbpadded">
+            <%= render :partial => "/explain", :locals => {:query => query} %>
+          </div>
+          <div style="display: none" id="warning_<%= query.id %>_trace" class="indent small">
+            <%= render :partial => "/trace", :object => query.relevant_trace, :locals => {:query_id => query.id, :full_trace => query.full_trace} %>
+          </div>
+      </li>
 			<% end %>
 		</ul>
 	<% end %>
