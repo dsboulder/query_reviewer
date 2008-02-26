@@ -7,7 +7,8 @@
 		<th>extra</th>
 		<th>possible_keys</th>
 		<th>key</th>
-		<th>ref</th>
+    <th>key length</th>
+    <th>ref</th>
 		<th>rows</th>
 	</tr>
 	</thead>
@@ -20,7 +21,8 @@
 		<td title="<%= h subquery.extra %>"><%= h subquery.extra %></td>
 		<td title="<%= h subquery.possible_keys %>"><%= h subquery.possible_keys %></td>
 		<td title="<%= h subquery.key %>"><%= h subquery.key %></td>
-		<td title="<%= h subquery.ref %>"><%= h subquery.ref %></td>
+    <td title="<%= h subquery.key_len %>"><%= h subquery.key_len %></td>  
+    <td title="<%= h subquery.ref %>"><%= h subquery.ref %></td>
 		<td title="<%= h subquery.rows %>"><%= h subquery.rows %></td>
 	<tr>
 	<% end %>
