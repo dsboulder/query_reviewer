@@ -14,29 +14,42 @@ module QueryReviewer
       base.helper_method :query_review_output
     end
 
-    def query_review_output
+    def query_review_output(ajax = false)
       if QueryReviewer::CONFIGURATION["enabled"]
         faux_view = QueryViewBase.new([File.join(File.dirname(__FILE__), "views")], {}, self)
         queries = SqlQueryCollection.new(Thread.current["queries"])
         queries.analyze!
         faux_view.instance_variable_set("@queries", queries)
-        html = faux_view.render(:partial => "/box")      
+        if ajax
+          js = faux_view.render(:partial => "/box_ajax.js")
+        else
+          html = faux_view.render(:partial => "/box")
+        end
       else
         ""
       end
     end
 
     def add_query_output_to_view
-      if response.body.match(/<\/body>/i) && Thread.current["queries"]
-        idx = (response.body =~ /<\/body>/i)
-        html = query_review_output
-        response.body.insert(idx, html)
+      if request.xhr?
+        if !response.content_type || response.content_type.include?("text/html")
+          response.body += "<script type=\"text/javascript\">"+query_review_output(true)+"</script>"
+        elsif response.content_type && response.content_type.include?("text/javascript")
+          response.body += ";\n"+query_review_output(true)
+        end
+      else
+        if response.body.match(/<\/body>/i) && Thread.current["queries"]
+          idx = (response.body =~ /<\/body>/i)
+          html = query_review_output
+          response.body.insert(idx, html)
+        end
       end
     end
 
     def perform_action_with_query_review
       r = perform_action_without_query_review
-      if response.content_type.blank? || response.content_type == "text/html"
+      if QueryReviewer::CONFIGURATION["enabled"] &&
+          (response.content_type.blank? || response.content_type.include?("text/html") || response.content_type.include?("text/javascript"))
         add_query_output_to_view
       end
       r
