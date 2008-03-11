@@ -4,9 +4,11 @@ module QueryReviewer
       def parent_div_class
         "sql_#{parent_div_status.downcase}"
       end
-      
+
       def parent_div_status
-        if overall_max_severity < (QueryReviewer::CONFIGURATION["warn_severity"] || 4)
+        if !enabled_by_cookie
+          "DISABLED"
+        elsif overall_max_severity < (QueryReviewer::CONFIGURATION["warn_severity"] || 4)
           "OK"
         elsif overall_max_severity < (QueryReviewer::CONFIGURATION["critical_severity"] || 7)
           # uh oh
@@ -16,7 +18,7 @@ module QueryReviewer
           "CRITICAL"
         end
       end
-      
+
       def syntax_highlighted_sql(sql)
         if QueryReviewer::CONFIGURATION["uv"]
           uv_out = Uv.parse(sql, "xhtml", "sql_rails", false, "blackboard")
@@ -25,14 +27,14 @@ module QueryReviewer
           sql
         end
       end
-      
+
       def overall_max_severity
         max = 0
         max = queries_with_warnings_sorted_nonignored[0].max_severity unless queries_with_warnings_sorted_nonignored.empty?
         max = warnings_no_query_sorted.first.severity unless warnings_no_query_sorted.empty? || warnings_no_query_sorted.first.severity < max
         max
       end
-      
+
       def severity_color(severity)
         red = (severity * 16.0 / 10).to_i
         green = ((10-severity) * 16.0 / 10).to_i
@@ -42,37 +44,41 @@ module QueryReviewer
         green = 0 if green < 0
         "##{red.to_s(16)}#{green.to_s(16)}0"
       end
-      
+
       def ignore_hash?(h)
       	(@controller.send(:cookies)["query_review_ignore_list"] || "").split(",").include?(h.to_s)
       end
-      
+
       def queries_with_warnings
-        @queries.queries.select{|q| q.has_warnings?}       
+        @queries.queries.select{|q| q.has_warnings?}
       end
-      
+
       def queries_with_warnings_sorted
         queries_with_warnings.sort{|a,b| a.max_severity <=> b.max_severity}.reverse
       end
-      
+
       def queries_with_warnings_sorted_nonignored
-        queries_with_warnings_sorted.select{|q| q.max_severity >= ::QueryReviewer::CONFIGURATION["warn_severity"] && !ignore_hash?(q.to_hash)} 
+        queries_with_warnings_sorted.select{|q| q.max_severity >= ::QueryReviewer::CONFIGURATION["warn_severity"] && !ignore_hash?(q.to_hash)}
       end
 
       def queries_with_warnings_sorted_ignored
-        queries_with_warnings_sorted.reject{|q| q.max_severity >= ::QueryReviewer::CONFIGURATION["warn_severity"] && !ignore_hash?(q.to_hash)} 
+        queries_with_warnings_sorted.reject{|q| q.max_severity >= ::QueryReviewer::CONFIGURATION["warn_severity"] && !ignore_hash?(q.to_hash)}
       end
-      
+
       def warnings_no_query_sorted
         @queries.collection_warnings.sort{|a,b| a.severity <=> b.severity}.reverse
       end
 
       def warnings_no_query_sorted_ignored
-        warnings_no_query_sorted.select{|q| q.severity < ::QueryReviewer::CONFIGURATION["warn_severity"]} 
+        warnings_no_query_sorted.select{|q| q.severity < ::QueryReviewer::CONFIGURATION["warn_severity"]}
       end
-      
+
       def warnings_no_query_sorted_nonignored
-        warnings_no_query_sorted.select{|q| q.severity >= ::QueryReviewer::CONFIGURATION["warn_severity"]} 
+        warnings_no_query_sorted.select{|q| q.severity >= ::QueryReviewer::CONFIGURATION["warn_severity"]}
+      end
+
+      def enabled_by_cookie
+        @controller.send(:cookies)["query_review_enabled"]
       end
     end
   end

@@ -5,7 +5,7 @@
       <%= render :partial => "/box_header" %>
     </div>
     <div class="query_review_details" id="query_review_details_0" style="display: none;">
-      <%= render :partial => "/box_body" %>
+      <%= render :partial => enabled_by_cookie ? "/box_body" : "/box_disabled" %>
     </div>
   </div>
 </div>

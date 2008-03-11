@@ -32,10 +32,12 @@ module QueryReviewer
 
     def add_query_output_to_view
       if request.xhr?
-        if !response.content_type || response.content_type.include?("text/html")
-          response.body += "<script type=\"text/javascript\">"+query_review_output(true)+"</script>"
-        elsif response.content_type && response.content_type.include?("text/javascript")
-          response.body += ";\n"+query_review_output(true)
+        if cookies["query_review_enabled"]
+          if !response.content_type || response.content_type.include?("text/html")
+            response.body += "<script type=\"text/javascript\">"+query_review_output(true)+"</script>"
+          elsif response.content_type && response.content_type.include?("text/javascript")
+            response.body += ";\n"+query_review_output(true)
+          end
         end
       else
         if response.body.match(/<\/body>/i) && Thread.current["queries"]
