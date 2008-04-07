@@ -20,6 +20,10 @@ module QueryReviewer
       self.send(method_name.to_sym)
     end
 
+    def table
+      @table[:table]
+    end
+
     private
 
     def warn(options)
@@ -29,7 +33,7 @@ module QueryReviewer
         options[:problem] = ("#{field.to_s.titleize}: #{val.blank? ? "(blank)" : val}")
       end
       options[:query] = self
-      options[:table] = @table[:table]
+      options[:table] = self.table
       @warnings << QueryWarning.new(options)
     end
 

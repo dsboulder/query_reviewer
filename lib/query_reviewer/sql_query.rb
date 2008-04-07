@@ -1,16 +1,21 @@
+require "ostruct"
+
 module QueryReviewer
   # a single SQL SELECT query
   class SqlQuery
-    attr_reader :sql, :rows, :subqueries, :trace, :id
+    attr_reader :sql, :rows, :subqueries, :trace, :id, :profile, :duration
 
     cattr_accessor :next_id
     self.next_id = 1
 
-    def initialize(sql, rows)
+    def initialize(sql, rows, duration = 0.0, profile = nil)
       @rows = rows
       @sql = sql
       @subqueries = rows.collect{|row| SqlSubQuery.new(self, row)}
       @id = (self.class.next_id += 1)
+      @profile = profile.collect { |p| OpenStruct.new(p) } if profile
+      @duration = duration.to_f
+      @warnings = []
       get_trace
     end
 
@@ -19,7 +24,7 @@ module QueryReviewer
     end
 
     def warnings
-      self.subqueries.collect(&:warnings).flatten
+      self.subqueries.collect(&:warnings).flatten + @warnings
     end
 
     def has_warnings?
@@ -30,8 +35,19 @@ module QueryReviewer
       self.warnings.empty? ? 0 : self.warnings.collect(&:severity).max
     end
 
+    def table
+      @subqueries.first.table
+    end
+
     def analyze!
       self.subqueries.collect(&:analyze!)
+      if duration
+        if duration >= QueryReviewer::CONFIGURATION["critical_duration_threshold"]
+          warn(:problem => "Query took #{duration} seconds", :severity => 9)
+        elsif duration >= QueryReviewer::CONFIGURATION["warn_duration_threshold"]
+          warn(:problem => "Query took #{duration} seconds", :severity => QueryReviewer::CONFIGURATION["critical_severity"])
+        end
+      end
     end
 
     def to_hash
@@ -51,6 +67,12 @@ module QueryReviewer
 
     def get_trace
       @trace = Kernel.caller
+    end
+    
+    def warn(options)
+      options[:query] = self
+      options[:table] ||= self.table
+      @warnings << QueryWarning.new(options)
     end
   end
 end

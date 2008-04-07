@@ -24,14 +24,25 @@
 		No queries to display.
 	<% else %>
 		<ul class="small">
-			<% @queries.queries.reject{|q| q.has_warnings?}.each do |query| %>
+			<% @queries.queries.reject{|q| q.has_warnings?}.sort{|a,b| b.duration <=> a.duration}.each do |query| %>
 			<li>
-				<%= render :partial => "/query_sql", :object => query %>
+        <% if QueryReviewer::CONFIGURATION["production_data"] %>
+          <%= duration_with_color(query.duration.to_f) %>s
+        <% end %>
+        <%= render :partial => "/query_sql", :object => query %>
           <a href="javascript: query_review_toggle('warning_<%= query.id %>_explain')" title="show/hide sql">EXPLN</a>
+          <% if QueryReviewer::CONFIGURATION["profiling"] && query.profile %>
+            <a href="javascript: query_review_toggle('warning_<%= query.id %>_profile')" title="show/hide profile">PROF</a>
+          <% end %>
           <a href="javascript: query_review_toggle('warning_<%= query.id %>_trace')" title="show/hide stack trace">TRACE</a>
           <div style="display: none" id="warning_<%= query.id %>_explain" class="indent small tbpadded">
             <%= render :partial => "/explain", :locals => {:query => query} %>
           </div>
+          <% if QueryReviewer::CONFIGURATION["profiling"] && query.profile %>
+            <div style="display: none" id="warning_<%= query.id %>_profile" class="indent small">
+              <%= render :partial => "/profile", :locals => {:query => query} %>
+            </div>
+          <% end %>
           <div style="display: none" id="warning_<%= query.id %>_trace" class="indent small">
             <%= render :partial => "/trace", :object => query.relevant_trace, :locals => {:query_id => query.id, :full_trace => query.full_trace} %>
           </div>

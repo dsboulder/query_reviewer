@@ -7,8 +7,16 @@ all:
     trace_includes_vendor: false
     trace_includes_lib: true
     critical_query_count: 50
+    profiling: enabled
+    production_data: true
+    warn_duration_threshold: 0.2
+    critical_duration_threshold: 1.0
 
+# these values override the 'all' values when using that environment
 development:
+    enabled: true
+
+staging:
     enabled: true
 
 production:
