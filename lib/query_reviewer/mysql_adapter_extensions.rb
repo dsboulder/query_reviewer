@@ -29,7 +29,7 @@ module QueryReviewer
 
         query = SqlQuery.new(sql, cols, t2 - t1, profile)
         Thread.current["queries"] << query if Thread.current["queries"] && Thread.current["queries"].respond_to?(:<<)
-        @logger.debug(format_log_entry("Analyzing #{name}\n", query.to_table)) if @logger.level <= Logger::INFO
+        #@logger.debug(format_log_entry("Analyzing #{name}\n", query.to_table)) if @logger.level <= Logger::INFO
       end
       query_results
     end
