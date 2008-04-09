@@ -3,20 +3,14 @@ all:
     warn_severity: 3
     critical_severity: 7
     warn_query_count: 20
+    warn_key_length: 60
     stack_trace_lines: 3
     trace_includes_vendor: false
     trace_includes_lib: true
     critical_query_count: 50
-    profiling: enabled
-    production_data: true
-    warn_duration_threshold: 0.2
-    critical_duration_threshold: 1.0
+    critical_key_length: 100
 
-# these values override the 'all' values when using that environment
 development:
-    enabled: true
-
-staging:
     enabled: true
 
 production:
