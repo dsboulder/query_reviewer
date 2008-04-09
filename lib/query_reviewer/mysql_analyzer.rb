@@ -54,8 +54,8 @@ module QueryReviewer
     end
 
     def analyze_keylen!
-      if !self.key_len.to_i.nil? && (self.key_len.to_i > QueryReviewer::CONFIGURATION["warn_key_length"])
-        warn :severity => (key_len.to_i > QueryReviewer::CONFIGURATION["critical_key_length"] ? 8 : 6), :problem => "Long key length (#{self.key_len.to_i})", :desc => "The key used for the index was rather long, potentially affecting indices in memory"
+      if self.key_len && !self.key_len.to_i.nil? && (self.key_len.to_i > QueryReviewer::CONFIGURATION["max_safe_key_length"])
+        warn :severity => 4, :problem => "Long key length (#{self.key_len.to_i})", :desc => "The key used for the index was rather long, potentially affecting indices in memory"
       end
     end
   end
