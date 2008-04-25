@@ -13,7 +13,9 @@
 			<% end %>
 			<a href="javascript: query_review_toggle('warning_<%= query_with_warning.id %>_desc')" title="show/hide warning message">MSG</a>
 			<a href="javascript: query_review_toggle('warning_<%= query_with_warning.id %>_sql')" title="show/hide sql">SQL</a>
-			<a href="javascript: query_review_toggle('warning_<%= query_with_warning.id %>_explain')" title="show/hide explain output">EXPLN</a>
+      <% if query_with_warning.select? %>
+      	<a href="javascript: query_review_toggle('warning_<%= query_with_warning.id %>_explain')" title="show/hide explain output">EXPLN</a>
+      <% end %>
       <% if QueryReviewer::CONFIGURATION["profiling"] && query_with_warning.profile %>
   			<a href="javascript: query_review_toggle('warning_<%= query_with_warning.id %>_profile')" title="show/hide profile output">PROF</a>
       <% end %>
