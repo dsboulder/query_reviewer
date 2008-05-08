@@ -54,7 +54,7 @@ module QueryReviewer
       end
 
       def queries_with_warnings_sorted
-        queries_with_warnings.sort{|a,b| a.max_severity <=> b.max_severity}.reverse
+        queries_with_warnings.sort{|a,b| (b.max_severity * 1000 + (b.duration || 0)) <=> (a.max_severity * 1000 + (a.duration || 0))}
       end
 
       def queries_with_warnings_sorted_nonignored
