@@ -6,6 +6,7 @@ all:
     profiling: enabled
     production_data: true
     max_safe_key_length: 100
+    disable_sql_cache: true    
 
     warn_severity: 3
     critical_severity: 7
