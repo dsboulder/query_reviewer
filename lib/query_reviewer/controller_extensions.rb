@@ -49,8 +49,9 @@ module QueryReviewer
     end
 
     def perform_action_with_query_review
+      Thread.current["query_reviewer_enabled"] = cookies["query_review_enabled"]
       r = perform_action_without_query_review
-      if QueryReviewer::CONFIGURATION["enabled"] &&
+      if QueryReviewer::CONFIGURATION["enabled"]
           (response.content_type.blank? || response.content_type.include?("text/html") || response.content_type.include?("text/javascript"))
         add_query_output_to_view
       end

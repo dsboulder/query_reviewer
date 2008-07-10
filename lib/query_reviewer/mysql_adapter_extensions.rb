@@ -12,8 +12,10 @@ module QueryReviewer
       result = update_without_review(sql, *args)
       t2 = Time.now
 
-      query = SqlQuery.new(sql, nil, t2 - t1, nil, "UPDATE", result)
-      Thread.current["queries"] << query if Thread.current["queries"] && Thread.current["queries"].respond_to?(:<<)
+      if query_reviewer_enabled?
+        query = SqlQuery.new(sql, nil, t2 - t1, nil, "UPDATE", result)
+        Thread.current["queries"] << query
+      end
       
       result
     end
@@ -23,8 +25,10 @@ module QueryReviewer
       result = insert_without_review(sql, *args)
       t2 = Time.now
 
-      query = SqlQuery.new(sql, nil, t2 - t1, nil, "INSERT")
-      Thread.current["queries"] << query if Thread.current["queries"] && Thread.current["queries"].respond_to?(:<<)
+      if query_reviewer_enabled?
+        query = SqlQuery.new(sql, nil, t2 - t1, nil, "INSERT")
+        Thread.current["queries"] << query
+      end
 
       result
     end
@@ -34,12 +38,14 @@ module QueryReviewer
       result = delete_without_review(sql, *args)
       t2 = Time.now
 
-      query = SqlQuery.new(sql, nil, t2 - t1, nil, "DELETE", result)
-      Thread.current["queries"] << query if Thread.current["queries"] && Thread.current["queries"].respond_to?(:<<)
+      if query_reviewer_enabled?
+        query = SqlQuery.new(sql, nil, t2 - t1, nil, "DELETE", result)
+        Thread.current["queries"] << query
+      end
 
       result
     end
-
+    
     def select_with_review(sql, *args)
       sql.gsub!(/^SELECT /i, "SELECT SQL_NO_CACHE ") if QueryReviewer::CONFIGURATION["disable_sql_cache"]
       @logger.silence { execute("SET PROFILING=1") } if QueryReviewer::CONFIGURATION["profiling"]
@@ -47,7 +53,7 @@ module QueryReviewer
       query_results = select_without_review(sql, *args)
       t2 = Time.now
 
-      if @logger and sql =~ /^select/i
+      if @logger && sql =~ /^select/i && query_reviewer_enabled?
         use_profiling = QueryReviewer::CONFIGURATION["profiling"]
         use_profiling &&= (t2 - t1) >= QueryReviewer::CONFIGURATION["warn_duration_threshold"].to_f / 2.0 if QueryReviewer::CONFIGURATION["production_data"]
         
@@ -70,5 +76,9 @@ module QueryReviewer
       end
       query_results
     end
+    
+    def query_reviewer_enabled?
+      Thread.current["queries"] && Thread.current["queries"].respond_to?(:<<) && Thread.current["query_reviewer_enabled"]
+    end    
   end
 end
