@@ -1,4 +1,8 @@
-	<p>Total queries: <span class="number"><%= @queries.queries.length %></span></p>
+	<p>Total queries: <span class="number"><%= @queries.query_count %></span>&nbsp;&nbsp;
+      <% if @total_time %>Total time: <span class="number" title="TOTAL TIME: <%= @total_time %>s  QR_OVERHEAD: <%= @queries.overhead_time %>s">
+        <%= '%.3f' % (@total_time - @queries.overhead_time) %></span>s&nbsp;&nbsp;
+      <% end %>
+      MySQL Database Time: <span class="number"><%= '%.3f' % @queries.total_duration %></span>s</p>
 	<p class="indent">With warnings: <span class="number bad"><%= @queries.total_with_warnings %></span> (<%= @queries.percent_with_warnings %>%)</p>
 	<p class="indent">Without warnings: <span class="number good"><%= @queries.total_without_warnings %></span> (<%= @queries.percent_without_warnings %>%)</p>
   <p>Type:
@@ -35,7 +39,12 @@
         <% @queries.only_of_command(command, true).each do |query| %>
         <li>
           <% if QueryReviewer::CONFIGURATION["production_data"] %>
-            <%= duration_with_color(query.duration.to_f) %>s
+            <%= duration_with_color(query) %>s
+          <% end %>
+          <% if query.count > 1 %>
+            <b title="<%= query.count %> queries were executed with the same stack trace and similar SQL structure">
+              <%= query.count  %> identical queries
+            </b>
           <% end %>
           <%= render :partial => "/query_sql", :object => query %>
             <% if query.select? %>

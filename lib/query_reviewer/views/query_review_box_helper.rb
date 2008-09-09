@@ -81,13 +81,15 @@ module QueryReviewer
         @controller.send(:cookies)["query_review_enabled"]
       end
 
-      def duration_with_color(duration)        
+      def duration_with_color(query)
+        title = query.duration_stats
+        duration = query.duration
         if duration > QueryReviewer::CONFIGURATION["critical_duration_threshold"]
-          "<span style=\"color: #{severity_color(9)}\" title=\"#{duration}\">#{"%.3f" % duration}</span>"
+          "<span style=\"color: #{severity_color(9)}\" title=\"#{title}\">#{"%.3f" % duration}</span>"
         elsif duration > QueryReviewer::CONFIGURATION["warn_duration_threshold"]
-          "<span style=\"color: #{severity_color(QueryReviewer::CONFIGURATION["critical_severity"])}\" title=\"#{duration}\">#{"%.3f" % duration}</span>"
+          "<span style=\"color: #{severity_color(QueryReviewer::CONFIGURATION["critical_severity"])}\" title=\"#{title}\">#{"%.3f" % duration}</span>"
         else
-          "<span title=\"#{duration}\">#{"%.3f" % duration}</span>"
+          "<span title=\"#{title}\">#{"%.3f" % duration}</span>"
         end
       end
     end

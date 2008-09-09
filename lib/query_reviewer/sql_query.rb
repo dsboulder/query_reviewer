@@ -3,22 +3,49 @@ require "ostruct"
 module QueryReviewer
   # a single SQL SELECT query
   class SqlQuery
-    attr_reader :sql, :rows, :subqueries, :trace, :id, :profile, :duration, :command, :affected_rows
+    attr_reader :sqls, :rows, :subqueries, :trace, :id, :command, :affected_rows, :profiles, :durations, :sanitized_sql
 
     cattr_accessor :next_id
     self.next_id = 1
 
-    def initialize(sql, rows, duration = 0.0, profile = nil, command = "SELECT", affected_rows = 1)
+    def initialize(sql, rows, full_trace, duration = 0.0, profile = nil, command = "SELECT", affected_rows = 1, sanitized_sql = nil)
+      @trace = full_trace
       @rows = rows
-      @sql = sql
+      @sqls = [sql]
+      @sanitized_sql = sanitized_sql
       @subqueries = rows ? rows.collect{|row| SqlSubQuery.new(self, row)} : []
       @id = (self.class.next_id += 1)
-      @profile = profile.collect { |p| OpenStruct.new(p) } if profile
-      @duration = duration.to_f
+      @profiles = profile ? [profile.collect { |p| OpenStruct.new(p) }] : [nil]
+      @durations = [duration.to_f]
       @warnings = []
       @command = command
       @affected_rows = affected_rows
-      get_trace
+    end
+    
+    def add(sql, duration, profile)
+      sql << sql
+      durations << duration
+      profiles << profile
+    end
+    
+    def sql
+      sqls.first
+    end
+    
+    def count
+      durations.size
+    end
+    
+    def profile
+      profiles.first
+    end
+    
+    def duration
+      durations.sum
+    end
+
+    def duration_stats
+      "TOTAL:#{'%.3f' % duration}  AVG:#{'%.3f' % (durations.sum / durations.size)}  MAX:#{'%.3f' % (durations.max)}  MIN:#{'%.3f' % (durations.min)}"
     end
 
     def to_table
@@ -70,13 +97,9 @@ module QueryReviewer
     end
 
     def full_trace
-      trace.collect(&:strip).select{|t| !t.starts_with?("#{RAILS_ROOT}/vendor/plugins/query_reviewer") }
+      self.class.generate_full_trace(trace)
     end
 
-    def get_trace
-      @trace = Kernel.caller
-    end
-    
     def warn(options)
       options[:query] = self
       options[:table] ||= self.table
@@ -85,6 +108,23 @@ module QueryReviewer
 
     def select?
       self.command == "SELECT"
+    end
+    
+    def self.generate_full_trace(trace = Kernel.caller)
+      trace.collect(&:strip).select{|t| !t.starts_with?("#{RAILS_ROOT}/vendor/plugins/query_reviewer") }
+    end
+    
+    def self.sanitize_strings_and_numbers_from_sql(sql)
+      new_sql = sql.clone
+      new_sql.gsub!(/\b\d+\b/, "N")
+      new_sql.gsub!(/\b0x[0-9A-Fa-f]+\b/, "N")
+      new_sql.gsub!(/''/, "'S'")
+      new_sql.gsub!(/""/, "\"S\"")
+      new_sql.gsub!(/\\'/, "")
+      new_sql.gsub!(/\\"/, "")
+      new_sql.gsub!(/'[^']+'/, "'S'")
+      new_sql.gsub!(/"[^"]+"/, "\"S\"")
+      new_sql
     end
   end
 end

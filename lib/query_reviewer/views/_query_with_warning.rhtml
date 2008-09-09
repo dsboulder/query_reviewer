@@ -3,11 +3,16 @@
 		<%= render :partial => "/spectrum", :locals => {:severity => query_with_warning.max_severity} %>
     <% if QueryReviewer::CONFIGURATION["production_data"] %>
       <div style="float: left; padding-right: 5px;">
-        <%= duration_with_color(query_with_warning.duration.to_f) %>s
+        <%= duration_with_color(query_with_warning) %>s
       </div>
     <% end %>
     <p>
-			<i>Table <%= (query_with_warning.warnings.detect {|w| !w.table.blank? } || query_with_warning.warnings.last).table %>:</i>
+      <% if query_with_warning.count > 1 %>
+        <b title="<%= query_with_warning.count %> queries were executed with the same stack trace and similar SQL structure">
+            <%= query_with_warning.count  %> identical queries
+        </b>
+      <% end %>
+      <i>Table <%= (query_with_warning.warnings.detect {|w| !w.table.blank? } || query_with_warning.warnings.last).table %>:</i>
 			<% query_with_warning.warnings.sort{|a,b| a.severity <=> b.severity}.reverse.each_with_index do |warn, index| %>
 				<span style="color: <%= severity_color warn.severity%>;" title="<%= warn.desc%>"><%= warn.problem %></span><%= ", " if index < query_with_warning.warnings.length - 1 %>
 			<% end %>

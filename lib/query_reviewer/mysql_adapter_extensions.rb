@@ -12,11 +12,8 @@ module QueryReviewer
       result = update_without_review(sql, *args)
       t2 = Time.now
 
-      if query_reviewer_enabled?
-        query = SqlQuery.new(sql, nil, t2 - t1, nil, "UPDATE", result)
-        Thread.current["queries"] << query
-      end
-      
+      create_or_add_query_to_query_reviewer!(sql, nil, t2 - t1, nil, "UPDATE", result)
+
       result
     end
 
@@ -25,10 +22,7 @@ module QueryReviewer
       result = insert_without_review(sql, *args)
       t2 = Time.now
 
-      if query_reviewer_enabled?
-        query = SqlQuery.new(sql, nil, t2 - t1, nil, "INSERT")
-        Thread.current["queries"] << query
-      end
+      create_or_add_query_to_query_reviewer!(sql, nil, t2 - t1, nil, "INSERT")
 
       result
     end
@@ -38,10 +32,7 @@ module QueryReviewer
       result = delete_without_review(sql, *args)
       t2 = Time.now
 
-      if query_reviewer_enabled?
-        query = SqlQuery.new(sql, nil, t2 - t1, nil, "DELETE", result)
-        Thread.current["queries"] << query
-      end
+      create_or_add_query_to_query_reviewer!(sql, nil, t2 - t1, nil, "DELETE", result)
 
       result
     end
@@ -56,12 +47,17 @@ module QueryReviewer
       if @logger && sql =~ /^select/i && query_reviewer_enabled?
         use_profiling = QueryReviewer::CONFIGURATION["profiling"]
         use_profiling &&= (t2 - t1) >= QueryReviewer::CONFIGURATION["warn_duration_threshold"].to_f / 2.0 if QueryReviewer::CONFIGURATION["production_data"]
-        
+
         if use_profiling
+          t5 = Time.now
           @logger.silence { execute("SET PROFILING=1") }
+          t3 = Time.now
           select_without_review(sql, *args)
+          t4 = Time.now
           profile = @logger.silence { select_without_review("SHOW PROFILE ALL", *args) }
           @logger.silence { execute("SET PROFILING=0") }
+          t6 = Time.now
+          Thread.current["queries"].overhead_time += t6 - t5
         else
           profile = nil
         end
@@ -70,15 +66,25 @@ module QueryReviewer
           select_without_review("explain #{sql}", *args)
         end
 
-        query = SqlQuery.new(sql, cols, t2 - t1, profile)
-        Thread.current["queries"] << query if Thread.current["queries"] && Thread.current["queries"].respond_to?(:<<)
+        duration = t3 ? [t2 - t1, t4 - t3].min : t2 - t1
+        create_or_add_query_to_query_reviewer!(sql, cols, duration, profile)
+
         #@logger.debug(format_log_entry("Analyzing #{name}\n", query.to_table)) if @logger.level <= Logger::INFO
       end
       query_results
     end
     
     def query_reviewer_enabled?
-      Thread.current["queries"] && Thread.current["queries"].respond_to?(:<<) && Thread.current["query_reviewer_enabled"]
-    end    
+      Thread.current["queries"] && Thread.current["queries"].respond_to?(:find_or_create_sql_query) && Thread.current["query_reviewer_enabled"]
+    end
+    
+    def create_or_add_query_to_query_reviewer!(sql, cols, run_time, profile, command = "SELECT", affected_rows = 1)
+      if query_reviewer_enabled?
+        t1 = Time.now
+        Thread.current["queries"].find_or_create_sql_query(sql, cols, run_time, profile, command, affected_rows)
+        t2 = Time.now
+        Thread.current["queries"].overhead_time += t2 - t1
+      end
+    end
   end
 end
