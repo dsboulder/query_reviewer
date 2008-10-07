@@ -41,7 +41,7 @@ module QueryReviewer
           end
         end
       else
-        if response.body.match(/<\/body>/i) && Thread.current["queries"]
+        if response.body.is_a?(String) && response.body.match(/<\/body>/i) && Thread.current["queries"]
           idx = (response.body =~ /<\/body>/i)
           html = query_review_output(false, total_time)
           response.body.insert(idx, html)
