@@ -15,7 +15,7 @@ module QueryReviewer
       CONFIGURATION.merge!(YAML.load(File.read(app_config_file))[RAILS_ENV || "test"] || {}) 
     end
     
-    if CONFIGURATION["enabled"]
+    if enabled?
       begin      
         CONFIGURATION["uv"] ||= !Gem.searcher.find("uv").nil?
         if CONFIGURATION["uv"]
@@ -27,28 +27,20 @@ module QueryReviewer
     end    
   end
   
-  class QueryWarning
-    attr_reader :query, :severity, :problem, :desc, :table, :id
-
-    cattr_accessor :next_id
-    self.next_id = 1
-    
-    def initialize(options)
-      @query = options[:query]
-      @severity = options[:severity]
-      @problem = options[:problem]
-      @desc = options[:desc]
-      @table = options[:table]
-      @id = (self.class.next_id += 1)
-    end
+  def self.enabled?
+    CONFIGURATION["enabled"]
   end
 end
 
 QueryReviewer.load_configuration
-require "query_reviewer/array_extensions"
-require "query_reviewer/sql_query"
-require "query_reviewer/mysql_analyzer"
-require "query_reviewer/sql_sub_query"
-require "query_reviewer/mysql_adapter_extensions"
-require "query_reviewer/controller_extensions"
-require "query_reviewer/sql_query_collection"
+
+if QueryReviewer.enabled?
+  require "query_reviewer/query_warning"
+  require "query_reviewer/array_extensions"
+  require "query_reviewer/sql_query"
+  require "query_reviewer/mysql_analyzer"
+  require "query_reviewer/sql_sub_query"
+  require "query_reviewer/mysql_adapter_extensions"
+  require "query_reviewer/controller_extensions"
+  require "query_reviewer/sql_query_collection"
+end
