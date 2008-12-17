@@ -1,18 +1,23 @@
 # QueryReviewer
 require "ostruct"
+require 'erb'
+require 'yaml'
 
 module QueryReviewer
   CONFIGURATION = {}
     
   def self.load_configuration
-    CONFIGURATION.merge!(YAML.load(File.read(File.join(File.dirname(__FILE__), "..", "query_reviewer_defaults.yml")))["all"] || {})
-    CONFIGURATION.merge!(YAML.load(File.read(File.join(File.dirname(__FILE__), "..", "query_reviewer_defaults.yml")))[RAILS_ENV || "test"] || {})
+    default_config = YAML::load(ERB.new(IO.read(File.join(File.dirname(__FILE__), "..", "query_reviewer_defaults.yml"))).result)
+    
+    CONFIGURATION.merge!(default_config["all"] || {})
+    CONFIGURATION.merge!(default_config[RAILS_ENV || "test"] || {})
     
     app_config_file = File.join(RAILS_ROOT, "config", "query_reviewer.yml")
         
     if File.exist?(app_config_file)
-      CONFIGURATION.merge!(YAML.load(File.read(app_config_file))["all"] || {}) 
-      CONFIGURATION.merge!(YAML.load(File.read(app_config_file))[RAILS_ENV || "test"] || {}) 
+      app_config = YAML.load(ERB.new(IO.read(app_config_file)).result)
+      CONFIGURATION.merge!(app_config["all"] || {}) 
+      CONFIGURATION.merge!(app_config[RAILS_ENV || "test"] || {}) 
     end
     
     if enabled?
