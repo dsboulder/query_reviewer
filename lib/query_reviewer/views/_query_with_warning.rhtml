@@ -34,7 +34,7 @@
 	</div>
 	<p style="display: none" id="warning_<%= query_with_warning.id %>_desc" class="indent">
 		<% query_with_warning.warnings.each do |warn| %>
-			<span style="color: <%= severity_color warn.severity%>"><%= warn.desc %><br/>
+			<span style="color: <%= severity_color warn.severity%>"><%= warn.desc %></span><br/>
 		<% end %>
 	</p>
 	<p style="display: none" id="warning_<%= query_with_warning.id %>_sql" class="indent small tbpadded">
