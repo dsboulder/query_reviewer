@@ -7,27 +7,21 @@ module QueryReviewer
     end
 
     def self.included(base)
-      if QueryReviewer::CONFIGURATION["enabled"]
-        base.alias_method_chain :perform_action, :query_review if QueryReviewer::CONFIGURATION["inject_view"]
-        base.alias_method_chain :process, :query_review
-      end
+      base.alias_method_chain :perform_action, :query_review if QueryReviewer::CONFIGURATION["inject_view"]
+      base.alias_method_chain :process, :query_review
       base.helper_method :query_review_output
     end
 
     def query_review_output(ajax = false, total_time = nil)
-      if QueryReviewer::CONFIGURATION["enabled"]
-        faux_view = QueryViewBase.new([File.join(File.dirname(__FILE__), "views")], {}, self)
-        queries = Thread.current["queries"]
-        queries.analyze!
-        faux_view.instance_variable_set("@queries", queries)
-        faux_view.instance_variable_set("@total_time", total_time)
-        if ajax
-          js = faux_view.render(:partial => "/box_ajax.js")
-        else
-          html = faux_view.render(:partial => "/box")
-        end
+      faux_view = QueryViewBase.new([File.join(File.dirname(__FILE__), "views")], {}, self)
+      queries = Thread.current["queries"]
+      queries.analyze!
+      faux_view.instance_variable_set("@queries", queries)
+      faux_view.instance_variable_set("@total_time", total_time)
+      if ajax
+        js = faux_view.render(:partial => "/box_ajax.js")
       else
-        ""
+        html = faux_view.render(:partial => "/box")
       end
     end
 
@@ -53,11 +47,8 @@ module QueryReviewer
       Thread.current["query_reviewer_enabled"] = cookies["query_review_enabled"]
       t1 = Time.now
       r = perform_action_without_query_review
-      if QueryReviewer::CONFIGURATION["enabled"]
-          (response.content_type.blank? || response.content_type.include?("text/html") || response.content_type.include?("text/javascript"))
-        t2 = Time.now
-        add_query_output_to_view(t2 - t1)
-      end
+      t2 = Time.now
+      add_query_output_to_view(t2 - t1)
       r
     end
 

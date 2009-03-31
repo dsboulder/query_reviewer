@@ -49,6 +49,6 @@
     </div>
   <% end %>
   <div style="display: none" id="warning_<%= query_with_warning.id %>_trace" class="indent small">
-		<%= render :partial => "/trace", :object => query_with_warning.relevant_trace, :locals => {:query_id => query_with_warning.id, :full_trace => query_with_warning.full_trace} %>
+		<%= render :partial => "/query_trace", :object => query_with_warning.relevant_trace, :locals => {:query_id => query_with_warning.id, :full_trace => query_with_warning.full_trace} %>
 	</div>
 </li>

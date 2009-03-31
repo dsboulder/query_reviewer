@@ -1,6 +1,6 @@
 <div class="trace" id="trace_<%= query_id %>_abridged">
 <code>
-    <% trace[0..(QueryReviewer::CONFIGURATION["stack_trace_lines"] - 1)].compact.each do |c| %>
+    <% query_trace[0..(QueryReviewer::CONFIGURATION["stack_trace_lines"] - 1)].compact.each do |c| %>
       <% if c.match(/:.*:/) %>
         <% file = h(c.slice(0..(c.index(":", c.index(":")+1)-1))) %>
         <span><%= file.split("/")[0..-2].join("/") %>/</span><span class="bold"><%= file.split("/").last %></span>
