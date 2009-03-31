@@ -227,7 +227,7 @@ div.query_review_details th {
 }
 </style>
 
-<script type="text/javascript"><![CDATA[
+<% javascript_tag do %>
 //Super lame show/hide functions so we don't need any 3rd party JS libs
 function query_review_show(id) {
 	document.getElementById(id).style.display = "block";
@@ -294,5 +294,4 @@ function remove_ignore_hash(h) {
 	}
 	createCookie("query_review_ignore_list", new_list.join(","))
 }
-]]>
-</script>
+<% end %>
