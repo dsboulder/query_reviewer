@@ -24,7 +24,7 @@ module QueryReviewer
           uv_out = Uv.parse(sql, "xhtml", "sql_rails", false, "blackboard")
           uv_out.gsub("<pre class=\"blackboard\">", "<code class=\"sql\">").gsub("</pre>", "</code>")
         else
-          sql
+          sql.gsub(/</, "&lt;").gsub(/>/, "&gt;")
         end
       end
 
