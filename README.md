@@ -80,7 +80,16 @@ Random collection of resources that might be interesting related to this utility
  * <http://www.williambharding.com/blog/rails/rails-mysql-indexes-step-1-in-pitiful-to-prime-performance/>
  * <http://guides.rubyonrails.org/performance_testing.html>
 
-## Acknowldgements ##
+## Alternatives ##
+
+There have been other alternatives created since this was originally released. A few of the best are listed below. I for one still prefer this utility over the other options:
+
+ * [rack-bug](https://github.com/brynary/rack-bug)
+ * [rails-footnotes](https://github.com/josevalim/rails-footnotes)
+ * [newrelic-development](http://support.newrelic.com/kb/docs/developer-mode)
+ * [palmist](https://github.com/flyingmachine/palmist)
+
+## Acknowledgements ##
 
 Created by Kongregate & David Stevenson. Refactorings and compilations of all fixes since was done by Nathan Esquenazi.
 
