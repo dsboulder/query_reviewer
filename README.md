@@ -61,7 +61,6 @@ The configuration file allows you to set configuration parameters shared across 
  * `warn_duration_threshold`: how long a query must take in seconds (float) before it's considered "WARNING"
  * `critical_duration_threshold`: how long a query must take in seconds (float) before it's considered "CRITICIAL"
 
-
 ## Example ##
 
 If you disable the inject_view option, you'll need to manually put the analyzer's output into your view:
@@ -70,6 +69,16 @@ If you disable the inject_view option, you'll need to manually put the analyzer'
     = query_review_output
 
 and that will display the analyzer view!
+
+## Resources ##
+
+Random collection of resources that might be interesting related to this utility:
+
+ * http://blog.purifyapp.com/2010/06/15/optimise-your-mysql/
+ * http://www.tatvartha.com/2009/09/rails-optimizing-database-indexes-using-query_analyzer-and-query_reviewer/
+ * http://www.geekskillz.com/articles/using-indexes-to-improve-rails-performance
+ * http://www.williambharding.com/blog/rails/rails-mysql-indexes-step-1-in-pitiful-to-prime-performance/
+ * http://guides.rubyonrails.org/performance_testing.html
 
 ## Acknowldgements ##
 
