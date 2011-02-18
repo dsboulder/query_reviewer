@@ -80,6 +80,12 @@ Random collection of resources that might be interesting related to this utility
  * <http://www.williambharding.com/blog/rails/rails-mysql-indexes-step-1-in-pitiful-to-prime-performance/>
  * <http://guides.rubyonrails.org/performance_testing.html>
 
+Other related gems that prove useful for database optimization:
+
+ * [bullet](https://github.com/flyerhzm/bullet)
+ * [slim-scrooge](https://github.com/sdsykes/slim_scrooge)
+ * [slim-attributes](https://github.com/sdsykes/slim-attributes)
+
 ## Alternatives ##
 
 There have been other alternatives created since this was originally released. A few of the best are listed below. I for one still prefer this utility over the other options:
@@ -88,6 +94,8 @@ There have been other alternatives created since this was originally released. A
  * [rails-footnotes](https://github.com/josevalim/rails-footnotes)
  * [newrelic-development](http://support.newrelic.com/kb/docs/developer-mode)
  * [palmist](https://github.com/flyingmachine/palmist)
+
+Know of a better alternative? Let me know!
 
 ## Acknowledgements ##
 
