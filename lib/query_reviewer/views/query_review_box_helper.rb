@@ -46,7 +46,7 @@ module QueryReviewer
       end
 
       def ignore_hash?(h)
-      	(@controller.send(:cookies)["query_review_ignore_list"] || "").split(",").include?(h.to_s)
+        (controller.send(:cookies)["query_review_ignore_list"] || "").split(",").include?(h.to_s)
       end
 
       def queries_with_warnings
@@ -78,7 +78,7 @@ module QueryReviewer
       end
 
       def enabled_by_cookie
-        @controller.send(:cookies)["query_review_enabled"]
+        controller.send(:cookies)["query_review_enabled"]
       end
 
       def duration_with_color(query)
