@@ -24,12 +24,20 @@ I use this for all my rails projects. Still the best out there in my opinion for
 
 Last commit to main repository was on March 30th, 2009. Compiled a variety of fixes that were made since that time.
 
+**Note:** In Rails 3, support has not been tested yet but it is planned to be added very soon. The intent for this version of the gem to work for both Rails 2.X as well as Rails 3. Stay Tuned!
+
 ## Installation ##
 
-All you have to do is install it! Right now this is a fork so assuming you use bundler:
+All you have to do is install it!
+
+Right now this is a fork so assuming you use bundler, simply add to your Gemfile:
 
     # Gemfile
     gem "query_reviewer", :git => "git://github.com/nesquena/query_reviewer.git"
+
+If you are not using bundler, perhaps clone this repo and unpack under `vendor/gems` or install as a plugin:
+
+    script/plugin install git://github.com/nesquena/query_reviewer.git
 
 In Rails 2, Rake tasks are not automatically loaded from gems, so you’ll need to add the following to your Rakefile:
 
@@ -46,6 +54,7 @@ You can then run:
 Which will create `config/query_reviewer.yml`, see below for what these options mean.
 If you don't create a config file, the gem will use the default in `vendor/plugins/query_reviewer`.
 
+In Rails 3, support has not been tested yet but it is planned to be added very soon.
 
 ## Configuration ##
 
