@@ -74,11 +74,11 @@ and that will display the analyzer view!
 
 Random collection of resources that might be interesting related to this utility:
 
- * http://blog.purifyapp.com/2010/06/15/optimise-your-mysql/
- * http://www.tatvartha.com/2009/09/rails-optimizing-database-indexes-using-query_analyzer-and-query_reviewer/
- * http://www.geekskillz.com/articles/using-indexes-to-improve-rails-performance
- * http://www.williambharding.com/blog/rails/rails-mysql-indexes-step-1-in-pitiful-to-prime-performance/
- * http://guides.rubyonrails.org/performance_testing.html
+ * <http://blog.purifyapp.com/2010/06/15/optimise-your-mysql/>
+ * <http://www.tatvartha.com/2009/09/rails-optimizing-database-indexes-using-query_analyzer-and-query_reviewer/>
+ * <http://www.geekskillz.com/articles/using-indexes-to-improve-rails-performance>
+ * <http://www.williambharding.com/blog/rails/rails-mysql-indexes-step-1-in-pitiful-to-prime-performance/>
+ * <http://guides.rubyonrails.org/performance_testing.html>
 
 ## Acknowldgements ##
 
