@@ -11,7 +11,7 @@ QueryReviewer is an advanced SQL query analyzer.  It accomplishes the following 
 
 ## Fork ##
 
-I forked the original [query_reviewer](https://github.com/dsboulder/query_reviewer) and applied a collection of patches that have been made since the plugin was originally created. A list of additions is below:
+I use this for all my rails projects. Still the best out there in my opinion for analyzing and understanding your ActiveRecord generated queries. I forked the original [query_reviewer](https://github.com/dsboulder/query_reviewer) and applied a collection of patches that have been made since the plugin was originally created. A list of additions is below:
 
  * Snazzed up the README into markdown for better readability
  * Fix deprecated use of `require 'activesupport` to `active_support`
@@ -21,6 +21,8 @@ I forked the original [query_reviewer](https://github.com/dsboulder/query_review
  * Fix sql escaping for XHTML compatibility
  * Fixes for deprecation warnings and for 1.9 compatiblity
  * Converts templates to Rails 2 + 3 friends .html.erb naming
+
+Last commit to main repository was on March 30th, 2009. Compiled a variety of fixes that were made since that time.
 
 ## Installation ##
 
