@@ -44,7 +44,7 @@ If you don't create a config file, the gem will use the default in `vendor/plugi
 The configuration file allows you to set configuration parameters shared across all rails environment, as well as overriding those shared parameteres with environment-specific parameters (such as disabling analysis on production!)
 
  * `enabled`: whether any output or query analysis is performed.  Set this false in production!
- * `inject_view`: controls whether the output automatically is injected before the </body> in HTML output.
+ * `inject_view`: controls whether the output automatically is injected before the &lt;/body&gt; in HTML output.
  * `profiling`: when enabled, runs the MySQL SET PROFILING=1 for queries longer than the `warn_duration_threshold` / 2.0
  * `production_data`: whether the duration of a query should be taken into account (if you don't have real data, don't let query duration effect you!)
 
