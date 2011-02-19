@@ -21,21 +21,22 @@ I use this for all my rails projects. Still the best out there in my opinion for
  * Fix sql escaping for XHTML compatibility
  * Fixes for deprecation warnings and for 1.9 compatiblity
  * Converts templates to Rails 2 + 3 friends .html.erb naming
+ * Full compatibility for Rails 3
 
 Last commit to main repository was on March 30th, 2009. Compiled a variety of fixes that were made since that time.
 
-**Note:** In Rails 3, support has not been tested yet but it is planned to be added very soon. The intent for this version of the gem to work for both Rails 2.X as well as Rails 3. Stay Tuned!
+**Note:** This plugin should work for Rails 2.X as well as Rails 3. Support for Rails 3 has been confirmed in the latest revision (without deprecation warnings).
 
 ## Installation ##
 
-All you have to do is install it!
+All you have to do is install it into your Rails 2 or 3 project.
 
-Right now this is a fork so assuming you use bundler, simply add to your Gemfile:
+Right now if you use bundler, simply add this to your Gemfile:
 
     # Gemfile
     gem "query_reviewer", :git => "git://github.com/nesquena/query_reviewer.git"
 
-If you are not using bundler, perhaps clone this repo and unpack under `vendor/gems` or install as a plugin:
+If you are not using bundler, clone this repo and unpack under `vendor/gems` or install this as a plugin:
 
     script/plugin install git://github.com/nesquena/query_reviewer.git
 
@@ -53,8 +54,6 @@ You can then run:
 
 Which will create `config/query_reviewer.yml`, see below for what these options mean.
 If you don't create a config file, the gem will use the default in `vendor/plugins/query_reviewer`.
-
-In Rails 3, support has not been tested yet but it is planned to be added very soon.
 
 ## Configuration ##
 
