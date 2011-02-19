@@ -79,7 +79,7 @@ The configuration file allows you to set configuration parameters shared across 
 
 ## Example ##
 
-If you disable the inject_view option, you'll need to manually put the analyzer's output into your view:
+If you disable the inject_view option above, you'll need to manually put the analyzer's output into your view:
 
     # view.html.haml
     = query_review_output
