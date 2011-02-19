@@ -23,7 +23,7 @@ module QueryReviewer
     ActiveRecord::Base
     adapter_class = ActiveRecord::ConnectionAdapters::MysqlAdapter  if defined? ActiveRecord::ConnectionAdapters::MysqlAdapter
     adapter_class = ActiveRecord::ConnectionAdapters::Mysql2Adapter if defined? ActiveRecord::ConnectionAdapters::Mysql2Adapter
-    adapter_class.send(:include, QueryReviewer::MysqlAdapterExtensions)
+    adapter_class.send(:include, QueryReviewer::MysqlAdapterExtensions) if adapter_class
     # Load into controllers
     ActionController::Base.send(:include, QueryReviewer::ControllerExtensions)
     Array.send(:include, QueryReviewer::ArrayExtensions)
