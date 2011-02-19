@@ -36,16 +36,17 @@ Right now if you use bundler, simply add this to your Gemfile:
     # Gemfile
     gem "query_reviewer", :git => "git://github.com/nesquena/query_reviewer.git"
 
-If you are not using bundler, clone this repo and unpack under `vendor/gems` or install this as a plugin:
+If you are not using bundler, you might want to [start using it](http://gembundler.com/rails23.html). You can also install this as a plugin:
 
     script/plugin install git://github.com/nesquena/query_reviewer.git
 
-In Rails 2, Rake tasks are not automatically loaded from gems, so you’ll need to add the following to your Rakefile:
+In Rails 2, if the rake tasks is not loaded, you’ll need to add the following to your Rakefile:
 
+    # Rakefile
     begin
       require 'query_reviewer/tasks'
     rescue LoadError
-      STDERR.puts "Run `rake gems:install` to install query_reviewer"
+      STDERR.puts "query_reviewer gem could not be found!"
     end
 
 You can then run:
