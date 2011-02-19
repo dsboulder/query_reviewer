@@ -49,3 +49,6 @@ if QueryReviewer.enabled?
   require "query_reviewer/controller_extensions"
   require "query_reviewer/sql_query_collection"
 end
+
+# Rails Integration
+require 'query_reviewer/rails' if defined?(Rails)
