@@ -1,21 +1,4 @@
 require 'query_reviewer'
-require 'rails'
-
-if defined?(Rails::Railtie)
-  module QueryReviewer
-    class Railtie < Rails::Railtie
-      rake_tasks do
-        load File.dirname(__FILE__) + "/tasks.rb"
-      end
-
-      initializer "query_reviewer.initialize" do
-        QueryReviewer.inject_reviewer if QueryReviewer.enabled?
-      end
-    end
-  end
-else # Rails 2
-  QueryReviewer.inject_reviewer
-end
 
 module QueryReviewer
   def self.inject_reviewer
@@ -31,4 +14,20 @@ module QueryReviewer
       ActionController::Base.append_view_path(File.dirname(__FILE__) + "/lib/query_reviewer/views")
     end
   end
+end
+
+if defined?(Rails::Railtie)
+  module QueryReviewer
+    class Railtie < Rails::Railtie
+      rake_tasks do
+        load File.dirname(__FILE__) + "/tasks.rb"
+      end
+
+      initializer "query_reviewer.initialize" do
+        QueryReviewer.inject_reviewer if QueryReviewer.enabled?
+      end
+    end
+  end
+else # Rails 2
+  QueryReviewer.inject_reviewer
 end

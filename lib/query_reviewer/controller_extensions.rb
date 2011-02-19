@@ -9,7 +9,7 @@ module QueryReviewer
 
     def self.included(base)
       if QueryReviewer::CONFIGURATION["inject_view"]
-        alias_name = base.respond_to?(:perform_action) ? :perform_action : :process_action
+        alias_name = defined?(Rails::Railtie) ? :process_action : :perform_action
         base.alias_method_chain(alias_name, :query_review)
       end
       base.alias_method_chain :process, :query_review
@@ -50,7 +50,7 @@ module QueryReviewer
     def perform_action_with_query_review(*args)
       Thread.current["query_reviewer_enabled"] = cookies["query_review_enabled"]
       t1 = Time.now
-      r = self.respond_to?(:perform_action) ? perform_action_without_query_review(*args) : process_action_without_query_review(*args)
+      r = defined?(Rails::Railtie) ? process_action_without_query_review(*args) : perform_action_without_query_review(*args)
       t2 = Time.now
       add_query_output_to_view(t2 - t1)
       r
