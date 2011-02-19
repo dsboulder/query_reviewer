@@ -21,11 +21,11 @@ I use this for all my rails projects. Still the best out there in my opinion for
  * Fix sql escaping for XHTML compatibility
  * Fixes for deprecation warnings and for 1.9 compatiblity
  * Converts templates to Rails 2 + 3 friends .html.erb naming
- * Full compatibility for Rails 3
+ * Full compatibility for Rails 3 (including Railtie)
 
-Last commit to main repository was on March 30th, 2009. Compiled a variety of fixes that were made since that time.
+Last commit to main repository was on March 30th, 2009. This fork compiles a variety of patches that were made since that time along with additional work to support compatibility with 1.9 and Rails 3. **Also:** If anyone else creates generally useful enhancements to this utility please start by forking this and then please issue me a pull request.
 
-**Note:** This plugin should work for Rails 2.X as well as Rails 3. Support for Rails 3 has been confirmed in the latest revision (without deprecation warnings).
+**Note:** This plugin should work for Rails 2.X and Rails 3. Support for Rails 3 has been confirmed in the latest revision (with fixed deprecation warnings). 
 
 ## Installation ##
 
@@ -40,7 +40,7 @@ If you are not using bundler, you might want to [start using it](http://gembundl
 
     script/plugin install git://github.com/nesquena/query_reviewer.git
 
-In Rails 2, if the rake tasks is not loaded, you’ll need to add the following to your Rakefile:
+In Rails 2, if the rake tasks are not loaded automatically, you’ll need to add the following to your Rakefile:
 
     # Rakefile
     begin
@@ -111,6 +111,8 @@ There have been other alternatives created since this was originally released. A
  * [rails-footnotes](https://github.com/josevalim/rails-footnotes)
  * [newrelic-development](http://support.newrelic.com/kb/docs/developer-mode)
  * [palmist](https://github.com/flyingmachine/palmist)
+ * [query_diet](https://github.com/makandra/query_diet)
+ * [query_trace](https://github.com/ntalbott/query_trace)
 
 Know of a better alternative? Let me know!
 
