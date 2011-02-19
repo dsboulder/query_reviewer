@@ -9,21 +9,20 @@ QueryReviewer is an advanced SQL query analyzer.  It accomplishes the following 
  * Attach meaningful warnings to individual queries, and collections of queries
  * Display interactive summary on page
 
-## Fork ##
+## This Fork ##
 
-I use this for all my rails projects. Still the best out there in my opinion for analyzing and understanding your ActiveRecord generated queries. I forked the original [query_reviewer](https://github.com/dsboulder/query_reviewer) and applied a collection of patches that have been made since the plugin was originally created. A list of additions is below:
+I use this utility for most of my rails projects. Still the best out there in my opinion for analyzing and understanding your generated SQL queries. I forked the original [query_reviewer](https://github.com/dsboulder/query_reviewer) and applied a collection of patches that have been made since the plugin was created. A list of the biggest additions below:
 
  * Snazzed up the README into markdown for better readability
- * Fix deprecated use of `require 'activesupport` to `active_support`
- * Cleanup and move rake task to `lib/tasks` to fix deprecation warnings
- * Added gemspec for use with Bundler
- * Fixed missing tags and additional XHTML escaping
- * Fix sql escaping for XHTML compatibility
- * Fixes for deprecation warnings and for 1.9 compatiblity
- * Converts templates to Rails 2 + 3 friends .html.erb naming
  * Full compatibility for Rails 3 (including Railtie)
+ * Cleanup and move rake task to `lib/tasks` to fix deprecation warnings
+ * Added gemspec for use with Bundler (as a gem)
+ * Fixed missing tags and additional XHTML escaping
+ * Fix SQL escaping for better XHTML compatibility
+ * Fixes for deprecation warnings and for 1.9 compatiblity
+ * Converts templates to more modern foo.html.erb naming
 
-Last commit to main repository was on March 30th, 2009. This fork compiles a variety of patches that were made since that time along with additional work to support compatibility with 1.9 and Rails 3. **Also:** If anyone else creates generally useful enhancements to this utility please start by forking this and then please issue me a pull request.
+Last commit to the main repository was on March 30th, 2009. This fork compiles a variety of patches that were made since that time along with additional work to support compatibility with 1.9 and Rails 3. **Also:** If anyone else creates generally useful enhancements to this utility please start by forking this and then issue me a pull request.
 
 **Note:** This plugin should work for Rails 2.X and Rails 3. Support for Rails 3 has been confirmed in the latest revision (with fixed deprecation warnings). 
 
@@ -40,20 +39,20 @@ If you are not using bundler, you might want to [start using it](http://gembundl
 
     script/plugin install git://github.com/nesquena/query_reviewer.git
 
-In Rails 2, if the rake tasks are not loaded automatically, you’ll need to add the following to your Rakefile:
+In Rails 2, if the rake tasks are not loaded automatically (as a gem), you’ll need to add the following to your Rakefile:
 
     # Rakefile
     begin
       require 'query_reviewer/tasks'
     rescue LoadError
-      STDERR.puts "query_reviewer gem could not be found!"
+      STDERR.puts "The query_reviewer gem could not be found!"
     end
 
 You can then run:
 
-    rake query_reviewer:setup
+    $ rake query_reviewer:setup
 
-Which will create `config/query_reviewer.yml`, see below for what these options mean.
+Which will create `config/query_reviewer.yml` in your application, see below for what these options mean.
 If you don't create a config file, the gem will use the default in `vendor/plugins/query_reviewer`.
 
 ## Configuration ##
@@ -63,18 +62,14 @@ The configuration file allows you to set configuration parameters shared across 
  * `enabled`: whether any output or query analysis is performed.  Set this false in production!
  * `inject_view`: controls whether the output automatically is injected before the &lt;/body&gt; in HTML output.
  * `profiling`: when enabled, runs the MySQL SET PROFILING=1 for queries longer than the `warn_duration_threshold` / 2.0
- * `production_data`: whether the duration of a query should be taken into account (if you don't have real data, don't let query duration effect you!)
-
+ * `production_data`: whether the duration of a query should be taken into account
  * `stack_trace_lines`: number of lines of call stack to include in the "short" version of the stack trace
  * `trace_includes_vendor`: whether the "short" verison of the stack trace should include files in /vendor
  * `trace_includes_lib`: whether the "short" verison of the stack trace should include files in /lib
-
  * `warn_severity`: the severity of problem that merits "WARNING" status
  * `critical_severity`: the severity of problem that merits "CRITICAL" status
-
  * `warn_query_count`: the number of queries in a single request that merits "WARNING" status
  * `critical_query_count`: the number of queries in a single request that merits "CRITICAL" status
-
  * `warn_duration_threshold`: how long a query must take in seconds (float) before it's considered "WARNING"
  * `critical_duration_threshold`: how long a query must take in seconds (float) before it's considered "CRITICIAL"
 
