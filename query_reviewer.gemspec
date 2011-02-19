@@ -6,5 +6,5 @@ Gem::Specification.new do |s|
   s.homepage = 'https://github.com/nesquena/query_reviewer'
   s.summary = 'Runs explain before each select query and displays results in an overlayed div'
   s.description = s.summary
-  s.files = %w[MIT-LICENSE Rakefile README query_reviewer_defaults.yml] + Dir["lib/**/*"]
+  s.files = %w[MIT-LICENSE Rakefile README.md query_reviewer_defaults.yml] + Dir["lib/**/*"]
 end
