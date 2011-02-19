@@ -24,11 +24,13 @@ I use this utility for most of my rails projects. Still the best out there in my
 
 Last commit to the main repository was on March 30th, 2009. This fork compiles a variety of patches that were made since that time along with additional work to support compatibility with 1.9 and Rails 3. **Also:** If anyone else creates generally useful enhancements to this utility please start by forking this and then issue me a pull request.
 
-**Note:** This plugin should work for Rails 2.X and Rails 3. Support for Rails 3 has been confirmed in the latest revision (with fixed deprecation warnings). 
+**Note:** This plugin should work for Rails 2.X and Rails 3. Support for Rails 3 has been confirmed in the latest revision (with fixed deprecation warnings).
 
 ## Installation ##
 
 All you have to do is install it into your Rails 2 or 3 project.
+
+    gem install query_reviewer
 
 Right now if you use bundler, simply add this to your Gemfile:
 
@@ -39,7 +41,7 @@ If you are not using bundler, you might want to [start using it](http://gembundl
 
     script/plugin install git://github.com/nesquena/query_reviewer.git
 
-In Rails 2, if the rake tasks are not loaded automatically (as a gem), you’ll need to add the following to your Rakefile:
+In Rails 2, the rake tasks are not loaded automatically (as a gem), you’ll need to add the following to your Rakefile:
 
     # Rakefile
     begin
