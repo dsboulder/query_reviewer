@@ -115,6 +115,8 @@ Know of a better alternative? Let me know!
 
 ## Acknowledgements ##
 
-Created by Kongregate & David Stevenson. Refactorings and compilations of all fixes since was done by Nathan Esquenazi.
+Created by Kongregate & David Stevenson.
+Refactorings and compilations of all fixes since was done by Nathan Esquenazi.
+Also, ajvargo for helping with some fixes.
 
 Copyright (c) 2007-2008 Kongregate & David Stevenson, released under the MIT license
