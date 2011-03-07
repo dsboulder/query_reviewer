@@ -24,10 +24,14 @@ if defined?(Rails::Railtie)
       end
 
       initializer "query_reviewer.initialize" do
+        QueryReviewer.load_configuration
+
         QueryReviewer.inject_reviewer if QueryReviewer.enabled?
       end
     end
   end
 else # Rails 2
+  QueryReviewer.load_configuration
+
   QueryReviewer.inject_reviewer
 end

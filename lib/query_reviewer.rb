@@ -12,9 +12,9 @@ module QueryReviewer
     CONFIGURATION.merge!(default_config["all"] || {})
     CONFIGURATION.merge!(default_config[Rails.env || "test"] || {})
 
-    app_config_file = File.join(Rails.root.to_s, "config", "query_reviewer.yml")
+    app_config_file = Rails.root + "config/query_reviewer.yml"
 
-    if File.exist?(app_config_file)
+    if app_config_file.exist?
       app_config = YAML.load(ERB.new(IO.read(app_config_file)).result)
       CONFIGURATION.merge!(app_config["all"] || {})
       CONFIGURATION.merge!(app_config[Rails.env || "test"] || {})
@@ -29,25 +29,21 @@ module QueryReviewer
       rescue
         CONFIGURATION["uv"] ||= false
       end
+
+      require "query_reviewer/query_warning"
+      require "query_reviewer/array_extensions"
+      require "query_reviewer/sql_query"
+      require "query_reviewer/mysql_analyzer"
+      require "query_reviewer/sql_sub_query"
+      require "query_reviewer/mysql_adapter_extensions"
+      require "query_reviewer/controller_extensions"
+      require "query_reviewer/sql_query_collection"
     end
   end
 
   def self.enabled?
     CONFIGURATION["enabled"]
   end
-end
-
-QueryReviewer.load_configuration
-
-if QueryReviewer.enabled?
-  require "query_reviewer/query_warning"
-  require "query_reviewer/array_extensions"
-  require "query_reviewer/sql_query"
-  require "query_reviewer/mysql_analyzer"
-  require "query_reviewer/sql_sub_query"
-  require "query_reviewer/mysql_adapter_extensions"
-  require "query_reviewer/controller_extensions"
-  require "query_reviewer/sql_query_collection"
 end
 
 # Rails Integration
