@@ -38,7 +38,7 @@
 		<% end %>
 	</p>
 	<p style="display: none" id="warning_<%= query_with_warning.id %>_sql" class="indent small tbpadded">
-		<%= render :partial => "/query_sql", :object => query_with_warning %>
+		<%= render :partial => "/query_sql", :locals => {:query_sql => query_with_warning} %>
 	</p>
 	<div style="display: none" id="warning_<%= query_with_warning.id %>_explain" class="indent small tbpadded">
 		<%= render :partial => "/explain", :locals => {:query => query_with_warning} %>
@@ -49,6 +49,6 @@
     </div>
   <% end %>
   <div style="display: none" id="warning_<%= query_with_warning.id %>_trace" class="indent small">
-		<%= render :partial => "/query_trace", :object => query_with_warning.relevant_trace, :locals => {:query_id => query_with_warning.id, :full_trace => query_with_warning.full_trace} %>
+		<%= render :partial => "/query_trace", :locals => {:query_id => query_with_warning.id, :full_trace => query_with_warning.full_trace,:query_trace => query_with_warning.relevant_trace} %>
 	</div>
 </li>

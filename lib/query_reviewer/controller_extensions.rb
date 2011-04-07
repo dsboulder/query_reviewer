@@ -1,3 +1,4 @@
+require "action_view"
 require File.join(File.dirname(__FILE__), "views", "query_review_box_helper")
 
 module QueryReviewer
@@ -7,7 +8,10 @@ module QueryReviewer
     end
 
     def self.included(base)
-      base.alias_method_chain :perform_action, :query_review if QueryReviewer::CONFIGURATION["inject_view"]
+      if QueryReviewer::CONFIGURATION["inject_view"]
+        alias_name = defined?(Rails::Railtie) ? :process_action : :perform_action
+        base.alias_method_chain(alias_name, :query_review)
+      end
       base.alias_method_chain :process, :query_review
       base.helper_method :query_review_output
     end
@@ -38,23 +42,24 @@ module QueryReviewer
         if response.body.is_a?(String) && response.body.match(/<\/body>/i) && Thread.current["queries"]
           idx = (response.body =~ /<\/body>/i)
           html = query_review_output(false, total_time)
-          response.body.insert(idx, html)
+          response.body = response.body.insert(idx, html)
         end
       end
     end
 
-    def perform_action_with_query_review
+    def perform_action_with_query_review(*args)
       Thread.current["query_reviewer_enabled"] = cookies["query_review_enabled"]
       t1 = Time.now
-      r = perform_action_without_query_review
+      r = defined?(Rails::Railtie) ? process_action_without_query_review(*args) : perform_action_without_query_review(*args)
       t2 = Time.now
       add_query_output_to_view(t2 - t1)
       r
     end
+    alias_method :process_action_with_query_review, :perform_action_with_query_review
 
-    def process_with_query_review(request, response, method = :perform_action, *arguments) #:nodoc:
+    def process_with_query_review(*args) #:nodoc:
       Thread.current["queries"] = SqlQueryCollection.new
-      process_without_query_review(request, response, method, *arguments)
+      process_without_query_review(*args)
     end
   end
 end

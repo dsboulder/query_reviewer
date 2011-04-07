@@ -46,7 +46,7 @@
               <%= query.count  %> identical queries
             </b>
           <% end %>
-          <%= render :partial => "/query_sql", :object => query %>
+          <%= render :partial => "/query_sql", :locals=>{ :query_sql => query } %>
             <% if query.select? %>
               <a href="javascript: query_review_toggle('warning_<%= query.id %>_explain')" title="show/hide sql">EXPLN</a>
             <% end %>
@@ -63,11 +63,11 @@
               </div>
             <% end %>
             <div style="display: none" id="warning_<%= query.id %>_trace" class="indent small">
-              <%= render :partial => "/query_trace", :object => query.relevant_trace, :locals => {:query_id => query.id, :full_trace => query.full_trace} %>
+              <%= render :partial => "/query_trace", :locals => {:query_trace => query.relevant_trace, :query_id => query.id, :full_trace => query.full_trace} %>
             </div>
         </li>
         <% end %>
       </ul>
     <% end %>
   <% end %>
-  <p id="query_review_disable_link"><a href="javascript: eraseCookie('query_review_enabled'); query_review_hide('query_review_disable_link'); alert('Cookie successfully set.');">Disable analysis report</a> on next page load and from now on.</p>  
+  <p id="query_review_disable_link"><a href="javascript: eraseCookie('query_review_enabled'); query_review_hide('query_review_disable_link'); alert('Cookie successfully set.');">Disable analysis report</a> on next page load and from now on.</p>

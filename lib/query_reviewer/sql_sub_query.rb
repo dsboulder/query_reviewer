@@ -16,6 +16,7 @@ module QueryReviewer
     def analyze!
       @warnings = []
       adapter_name = ActiveRecord::Base.connection.instance_variable_get("@config")[:adapter]
+      adapter_name = 'mysql' if adapter_name == 'mysql2'
       method_name = "do_#{adapter_name}_analysis!"
       self.send(method_name.to_sym)
     end

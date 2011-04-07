@@ -1,0 +1,68 @@
+<% javascript_tag do %>
+//Super lame show/hide functions so we don't need any 3rd party JS libs
+function query_review_show(id) {
+  document.getElementById(id).style.display = "block";
+}
+
+function query_review_hide(id) {
+  document.getElementById(id).style.display = "none";
+}
+function query_review_toggle(id) {
+  if(document.getElementById(id).style.display == "none") {
+    document.getElementById(id).style.display = "block";
+  } else {
+    document.getElementById(id).style.display = "none";
+  }
+}
+function createCookie(name,value,days) {
+  if (days) {
+    var date = new Date();
+    date.setTime(date.getTime()+(days*24*60*60*1000));
+    var expires = "; expires="+date.toGMTString();
+  }
+  else var expires = "";
+  document.cookie = name+"="+value+expires+"; path=/";
+}
+
+function readCookie(name) {
+  var nameEQ = name + "=";
+  var ca = document.cookie.split(';');
+  for(var i=0;i < ca.length;i++) {
+    var c = ca[i];
+    while (c.charAt(0)==' ') c = c.substring(1,c.length);
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+  }
+  return null;
+}
+
+function eraseCookie(name) {
+  createCookie(name,"",-1);
+}
+
+function ignore_list() {
+  var ignore_list = readCookie("query_review_ignore_list")
+  if (!ignore_list)
+    ignore_list = []
+  else
+    ignore_list = ignore_list.split(",")
+  return ignore_list
+}
+
+function add_ignore_hash(h){
+  var list = ignore_list();
+  list[list.length] = h
+  createCookie("query_review_ignore_list", list.join(","))
+}
+
+function remove_ignore_hash(h) {
+  var list = ignore_list();
+  var new_list = []
+  for(var i=0; i<list.length; i++)
+  {
+    if(list[i].toString() != h.toString()) {
+      new_list[new_list.length] = list[i]
+    }
+  }
+  createCookie("query_review_ignore_list", new_list.join(","))
+}
+<% end %>

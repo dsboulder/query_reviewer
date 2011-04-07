@@ -21,25 +21,25 @@ module QueryReviewer
       @command = command
       @affected_rows = affected_rows
     end
-    
+
     def add(sql, duration, profile)
       sql << sql
       durations << duration
       profiles << profile
     end
-    
+
     def sql
       sqls.first
     end
-    
+
     def count
       durations.size
     end
-    
+
     def profile
       profiles.first
     end
-    
+
     def duration
       durations.sum
     end
@@ -77,7 +77,7 @@ module QueryReviewer
           warn(:problem => "Query took #{duration} seconds", :severity => QueryReviewer::CONFIGURATION["critical_severity"])
         end
       end
-      
+
       if affected_rows >= QueryReviewer::CONFIGURATION["critical_affected_rows"]
         warn(:problem => "#{affected_rows} rows affected", :severity => 9, :description => "An UPDATE or DELETE query can be slow and lock tables if it affects many rows.")
       elsif affected_rows >= QueryReviewer::CONFIGURATION["warn_affected_rows"]
@@ -90,10 +90,10 @@ module QueryReviewer
     end
 
     def relevant_trace
-      trace.collect(&:strip).select{|t| t.starts_with?(RAILS_ROOT) &&
-          (!t.starts_with?("#{RAILS_ROOT}/vendor") || QueryReviewer::CONFIGURATION["trace_includes_vendor"]) &&
-          (!t.starts_with?("#{RAILS_ROOT}/lib") || QueryReviewer::CONFIGURATION["trace_includes_lib"]) &&
-          !t.starts_with?("#{RAILS_ROOT}/vendor/plugins/query_reviewer") }
+      trace.collect(&:strip).select{|t| t.starts_with?(Rails.root.to_s) &&
+          (!t.starts_with?("#{Rails.root}/vendor") || QueryReviewer::CONFIGURATION["trace_includes_vendor"]) &&
+          (!t.starts_with?("#{Rails.root}/lib") || QueryReviewer::CONFIGURATION["trace_includes_lib"]) &&
+          !t.starts_with?("#{Rails.root}/vendor/plugins/query_reviewer") }
     end
 
     def full_trace
@@ -109,11 +109,11 @@ module QueryReviewer
     def select?
       self.command == "SELECT"
     end
-    
+
     def self.generate_full_trace(trace = Kernel.caller)
-      trace.collect(&:strip).select{|t| !t.starts_with?("#{RAILS_ROOT}/vendor/plugins/query_reviewer") }
+      trace.collect(&:strip).select{|t| !t.starts_with?("#{Rails.root}/vendor/plugins/query_reviewer") }
     end
-    
+
     def self.sanitize_strings_and_numbers_from_sql(sql)
       new_sql = sql.clone
       new_sql.gsub!(/\b\d+\b/, "N")

@@ -24,7 +24,7 @@ module QueryReviewer
           uv_out = Uv.parse(sql, "xhtml", "sql_rails", false, "blackboard")
           uv_out.gsub("<pre class=\"blackboard\">", "<code class=\"sql\">").gsub("</pre>", "</code>")
         else
-          sql
+          sql.gsub(/</, "&lt;").gsub(/>/, "&gt;")
         end
       end
 
@@ -46,7 +46,7 @@ module QueryReviewer
       end
 
       def ignore_hash?(h)
-      	(@controller.send(:cookies)["query_review_ignore_list"] || "").split(",").include?(h.to_s)
+        (controller.send(:cookies)["query_review_ignore_list"] || "").split(",").include?(h.to_s)
       end
 
       def queries_with_warnings
@@ -78,19 +78,20 @@ module QueryReviewer
       end
 
       def enabled_by_cookie
-        @controller.send(:cookies)["query_review_enabled"]
+        controller.send(:cookies)["query_review_enabled"]
       end
 
       def duration_with_color(query)
         title = query.duration_stats
         duration = query.duration
-        if duration > QueryReviewer::CONFIGURATION["critical_duration_threshold"]
+        span_html = if duration > QueryReviewer::CONFIGURATION["critical_duration_threshold"]
           "<span style=\"color: #{severity_color(9)}\" title=\"#{title}\">#{"%.3f" % duration}</span>"
         elsif duration > QueryReviewer::CONFIGURATION["warn_duration_threshold"]
           "<span style=\"color: #{severity_color(QueryReviewer::CONFIGURATION["critical_severity"])}\" title=\"#{title}\">#{"%.3f" % duration}</span>"
         else
           "<span title=\"#{title}\">#{"%.3f" % duration}</span>"
         end
+        span_html.respond_to?(:html_safe) ? span_html.html_safe : span_html
       end
     end
   end
