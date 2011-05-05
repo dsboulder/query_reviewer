@@ -65,7 +65,7 @@ module QueryReviewer
     end
 
     def table
-      @subqueries.first.table
+      @subqueries.first.try(:table)
     end
 
     def analyze!
