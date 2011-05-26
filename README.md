@@ -35,11 +35,11 @@ All you have to do is install it into your Rails 2 or 3 project.
 Right now if you use bundler, simply add this to your Gemfile:
 
     # Gemfile
-    gem "query_reviewer", :git => "git://github.com/nesquena/query_reviewer.git"
+    gem "query_reviewer"
 
 If you are not using bundler, you might want to [start using it](http://gembundler.com/rails23.html). You can also install this as a plugin:
 
-    script/plugin install git://github.com/nesquena/query_reviewer.git
+    script/plugin install git://github.com/dsboulder/query_reviewer.git
 
 In Rails 2, the rake tasks are not loaded automatically (as a gem), you’ll need to add the following to your Rakefile:
 
@@ -59,9 +59,9 @@ If you don't create a config file, the gem will use the default in `vendor/plugi
 
 ## Configuration ##
 
-The configuration file allows you to set configuration parameters shared across all rails environment, as well as overriding those shared parameteres with environment-specific parameters (such as disabling analysis on production!)
+The configuration file allows you to set configuration parameters shared across all rails environment, as well as overriding those shared parameteres with environment-specific parameters.
 
- * `enabled`: whether any output or query analysis is performed.  Set this false in production!
+ * `enabled`: whether any output or query analysis is performed. By default, it's disabled for all environments except development.
  * `inject_view`: controls whether the output automatically is injected before the &lt;/body&gt; in HTML output.
  * `profiling`: when enabled, runs the MySQL SET PROFILING=1 for queries longer than the `warn_duration_threshold` / 2.0
  * `production_data`: whether the duration of a query should be taken into account
