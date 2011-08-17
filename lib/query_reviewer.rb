@@ -22,7 +22,12 @@ module QueryReviewer
 
     if enabled?
       begin
-        CONFIGURATION["uv"] ||= !Gem.searcher.find("uv").nil?
+        CONFIGURATION["uv"] ||= if Gem::Specification.respond_to?(:find_all_by_name)
+          !Gem::Specification.find_all_by_name('uv').empty?
+        else
+          !Gem.searcher.find("uv").nil?
+        end
+
         if CONFIGURATION["uv"]
           require "uv"
         end
